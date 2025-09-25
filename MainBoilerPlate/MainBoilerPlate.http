@@ -1,0 +1,6 @@
+@MainBoilerPlate_HostAddress = http://localhost:5195
+
+GET {{MainBoilerPlate_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

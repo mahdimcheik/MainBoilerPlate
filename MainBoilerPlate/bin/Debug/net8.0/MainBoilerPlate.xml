@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MainBoilerPlate</name>
+    </assembly>
+    <members>
+        <member name="T:MainBoilerPlate.Migrations.first">
+            <inheritdoc />
+        </member>
+        <member name="M:MainBoilerPlate.Migrations.first.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:MainBoilerPlate.Migrations.first.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:MainBoilerPlate.Migrations.first.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:MainBoilerPlate.Migrations.firstcorrection">
+            <inheritdoc />
+        </member>
+        <member name="M:MainBoilerPlate.Migrations.firstcorrection.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:MainBoilerPlate.Migrations.firstcorrection.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:MainBoilerPlate.Migrations.firstcorrection.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:MainBoilerPlate.Migrations.nameinterfaces">
+            <inheritdoc />
+        </member>
+        <member name="M:MainBoilerPlate.Migrations.nameinterfaces.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:MainBoilerPlate.Migrations.nameinterfaces.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:MainBoilerPlate.Migrations.nameinterfaces.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:MainBoilerPlate.Migrations.renametable">
+            <inheritdoc />
+        </member>
+        <member name="M:MainBoilerPlate.Migrations.renametable.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:MainBoilerPlate.Migrations.renametable.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:MainBoilerPlate.Migrations.renametable.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:MainBoilerPlate.Migrations.renametable_createAt">
+            <inheritdoc />
+        </member>
+        <member name="M:MainBoilerPlate.Migrations.renametable_createAt.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:MainBoilerPlate.Migrations.renametable_createAt.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:MainBoilerPlate.Migrations.renametable_createAt.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:MainBoilerPlate.Migrations.renametable_createAtValue">
+            <inheritdoc />
+        </member>
+        <member name="M:MainBoilerPlate.Migrations.renametable_createAtValue.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:MainBoilerPlate.Migrations.renametable_createAtValue.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:MainBoilerPlate.Migrations.renametable_createAtValue.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:MainBoilerPlate.Migrations.relations">
+            <inheritdoc />
+        </member>
+        <member name="M:MainBoilerPlate.Migrations.relations.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:MainBoilerPlate.Migrations.relations.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:MainBoilerPlate.Migrations.relations.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>
