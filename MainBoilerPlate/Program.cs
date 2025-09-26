@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,16 +17,17 @@ ConfigureServices(services);
 
 var app = builder.Build();
 
-// Configurer le pipeline de middleware
-ConfigureMiddlewarePipeline(app);
-
-app.Run();
-
-using (var scope = services.BuildServiceProvider().CreateScope())
+// Apply database migrations
+using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<MainContext>();
     context.Database.Migrate();
 }
+
+// Configurer le pipeline de middleware
+ConfigureMiddlewarePipeline(app);
+
+app.Run();
 
 #region Services
 static void ConfigureServices(IServiceCollection services)
@@ -58,16 +60,6 @@ static void ConfigureServices(IServiceCollection services)
         options.UseNpgsql(dataSource);
     });
 
-    var environment = services.BuildServiceProvider().GetService<IWebHostEnvironment>();
-    if (environment?.EnvironmentName != "Testing")
-    {
-        using (var scope = services.BuildServiceProvider().CreateScope())
-        {
-            var context = scope.ServiceProvider.GetRequiredService<MainContext>();
-            context.Database.Migrate();
-        }
-    }
-
     services.Configure<DataProtectionTokenProviderOptions>(options =>
     {
         options.TokenLifespan = TimeSpan.FromHours(1);
@@ -99,6 +91,7 @@ static void ConfigureCors(IServiceCollection services)
 static void ConfigureControllers(IServiceCollection services)
 {
     services.AddControllers();
+    services.AddEndpointsApiExplorer();
 }
 
 static void ConfigureIdentity(IServiceCollection services)
@@ -164,21 +157,44 @@ static void ConfigureSwagger(IServiceCollection services)
 {
     services.AddSwaggerGen(c =>
     {
+        c.SwaggerDoc("v1", new OpenApiInfo
+        {
+            Title = "MainBoilerPlate API",
+            Version = "v1",
+            Description = "API for MainBoilerPlate application"
+        });
+
         var xmlFilename = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
-        c.IncludeXmlComments(System.IO.Path.Combine(AppContext.BaseDirectory, xmlFilename));
-        c.AddSecurityDefinition(
-            "Bearer",
-            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+        var xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, xmlFilename);
+        if (System.IO.File.Exists(xmlPath))
+        {
+            c.IncludeXmlComments(xmlPath);
+        }
+
+        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            Type = SecuritySchemeType.ApiKey,
+            Scheme = "Bearer",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\""
+        });
+
+        c.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
             {
-                Name = "Authorization",
-                Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
-                Scheme = "Bearer",
-                BearerFormat = "JWT",
-                In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-                Description =
-                    "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\"",
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                new string[] {}
             }
-        );
+        });
     });
 
     services.AddHttpClient();
@@ -197,45 +213,42 @@ static void ConfigureMiddlewarePipeline(WebApplication app)
             .SetDefaultCulture("fr-FR")
     );
 
-    app.UseStaticFiles();
+    // Add payload size limit middleware early in the pipeline
+    app.Use(async (context, next) =>
+    {
+        if (context.Request.ContentLength > 200_000_000)
+        {
+            context.Response.StatusCode = StatusCodes.Status413PayloadTooLarge;
+            await context.Response.WriteAsync("Payload Too Large");
+            return;
+        }
 
-    app.UseAuthentication();
+        await next.Invoke();
+    });
+
+    app.UseStaticFiles();
 
     if (app.Environment.IsDevelopment())
     {
         app.UseDeveloperExceptionPage();
     }
 
+    // Swagger should be available in all environments except production
     app.UseSwagger();
-    if (!app.Environment.IsProduction())
+    app.UseSwaggerUI(c =>
     {
-        app.UseSwaggerUI(c =>
-        {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "data_lib v1");
-            c.RoutePrefix = "swagger";
-        });
-    }
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "MainBoilerPlate API v1");
+        c.RoutePrefix = string.Empty; // This makes Swagger UI available at the root URL
+        c.DocumentTitle = "MainBoilerPlate API Documentation";
+    });
 
     app.UseRouting();
 
     app.UseCors();
 
+    app.UseAuthentication();
     app.UseAuthorization();
 
     app.MapControllers();
-
-    app.Use(
-        async (context, next) =>
-        {
-            if (context.Request.ContentLength > 200_000_000)
-            {
-                context.Response.StatusCode = StatusCodes.Status413PayloadTooLarge;
-                await context.Response.WriteAsync("Payload Too Large");
-                return;
-            }
-
-            await next.Invoke();
-        }
-    );
 }
 #endregion

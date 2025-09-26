@@ -25,16 +25,16 @@ namespace MainBoilerPlate.Utilities
             return Guid.TryParse(value, out var result) ? result : Guid.Parse(fallBackValue);
         }
 
-        public static string JWT_KEY => GetEnvVar("JWT_KEY", "");
+        public static string JWT_KEY => GetEnvVar("JWT_KEY", "averyveryveryLongkeyforaveryveryverysecureaaplicationTwiceaveryveryveryLongkeyforaveryveryverysecureaaplicationTwice");
         public static string? API_BACK_URL => GetEnvVar("API_BACK_URL", "");
         public static string? API_FRONT_URL => GetEnvVar("API_FRONT_URL", "");
 
         // DATABASE
-        public static string? DB_PORT => GetEnvVar("DB_PORT", "5432");
-        public static string? DB_HOST => GetEnvVar("DB_HOST", "localhost");
-        public static string? DB_NAME => GetEnvVar("DB_NAME", "mainDB");
-        public static string? DB_USER => GetEnvVar("DB_USER", "postgres");
-        public static string? DB_PASSWORD => GetEnvVar("DB_PASSWORD", "beecoming");
+        public static string DB_PORT => GetEnvVar("DB_PORT", "5432");
+        public static string DB_HOST => GetEnvVar("DB_HOST", "localhost");
+        public static string DB_NAME => GetEnvVar("DB_NAME", "mainDB");
+        public static string DB_USER => GetEnvVar("DB_USER", "postgres");
+        public static string DB_PASSWORD => GetEnvVar("DB_PASSWORD", "beecoming");
 
         // Roles
         public static Guid ROLE_SUPER_ADMIN =>
