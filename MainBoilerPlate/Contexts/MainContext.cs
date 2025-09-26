@@ -11,6 +11,10 @@ namespace MainBoilerPlate.Contexts
         public DbSet<RoleApp> Roles { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Gender> Genders { get; set; }
+        public DbSet<TypeSlot> TypeSlots { get; set; }
+        public DbSet<Slot> Slots { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<Booking> Bookings { get; set; }
 
         public MainContext(DbContextOptions options)
             : base(options) { }
@@ -24,6 +28,10 @@ namespace MainBoilerPlate.Contexts
             builder.Entity<RoleApp>().ToTable("Roles");
             builder.Entity<Gender>().ToTable("Genders");
             builder.Entity<Address>().ToTable("Addresses");
+            builder.Entity<TypeSlot>().ToTable("TypeSlots");
+            builder.Entity<Slot>().ToTable("Slots");
+            builder.Entity<Order>().ToTable("Orders");
+            builder.Entity<Booking>().ToTable("Bookings");
 
             // Entities  properties
 
@@ -34,6 +42,8 @@ namespace MainBoilerPlate.Contexts
                 e.Property(u => u.FirstName).IsRequired().HasMaxLength(64);
                 e.Property(u => u.LastName).IsRequired().HasMaxLength(64);
                 e.Property(e => e.ArchivedAt).HasColumnType("timestamp with time zone");
+                e.Property(a => a.UpdatedAt).IsRequired().HasColumnType("timestamp with time zone");
+
                 e.Property(e => e.CreatedAt)
                     .IsRequired()
                     .HasColumnType("timestamp with time zone")
@@ -48,6 +58,8 @@ namespace MainBoilerPlate.Contexts
                 r.Property(r => r.Name).IsRequired().HasMaxLength(64);
                 r.Property(r => r.NormalizedName).IsRequired().HasMaxLength(64);
                 r.Property(e => e.ArchivedAt).HasColumnType("timestamp with time zone");
+                r.Property(a => a.UpdatedAt).HasColumnType("timestamp with time zone");
+
                 r.Property(e => e.CreatedAt)
                     .IsRequired()
                     .HasColumnType("timestamp with time zone")
@@ -67,8 +79,8 @@ namespace MainBoilerPlate.Contexts
                     .ValueGeneratedOnAdd()
                     .HasDefaultValueSql("CURRENT_TIMESTAMP");
                 g.Property(e => e.ArchivedAt).HasColumnType("timestamp with time zone");
+                g.Property(a => a.UpdatedAt).HasColumnType("timestamp with time zone");
             });
-
             builder.Entity<Address>(a =>
             {
                 a.HasKey(a => a.Id);
@@ -84,6 +96,77 @@ namespace MainBoilerPlate.Contexts
                     .ValueGeneratedOnAdd()
                     .HasDefaultValueSql("CURRENT_TIMESTAMP");
                 a.Property(e => e.ArchivedAt).HasColumnType("timestamp with time zone");
+                a.Property(a => a.UpdatedAt).HasColumnType("timestamp with time zone");
+            });
+            builder.Entity<Slot>(s =>
+            {
+                s.HasKey(a => a.Id);
+                s.Property(a => a.Id).IsRequired().HasMaxLength(64);
+                s.Property(a => a.DateFrom).IsRequired().HasColumnType("timestamp with time zone");
+                s.Property(a => a.DateTo).IsRequired().HasColumnType("timestamp with time zone");
+                s.Property(a => a.UpdatedAt).HasColumnType("timestamp with time zone");
+                s.Property(a => a.CreatedAt)
+                    .IsRequired()
+                    .HasColumnType("timestamp with time zone")
+                    .ValueGeneratedOnAdd()
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                s.Property(e => e.ArchivedAt).HasColumnType("timestamp with time zone");
+            });
+
+            builder.Entity<TypeSlot>(s =>
+            {
+                s.HasKey(a => a.Id);
+                s.Property(a => a.Id).IsRequired().HasMaxLength(64);
+                s.Property(g => g.Name).IsRequired().HasMaxLength(64);
+                s.Property(g => g.Color).IsRequired().HasMaxLength(16);
+                s.Property(g => g.Icon).HasMaxLength(256);
+                s.Property(a => a.UpdatedAt).HasColumnType("timestamp with time zone");
+                s.Property(a => a.CreatedAt)
+                    .IsRequired()
+                    .HasColumnType("timestamp with time zone")
+                    .ValueGeneratedOnAdd()
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                s.Property(e => e.ArchivedAt).HasColumnType("timestamp with time zone");
+            });
+
+            builder.Entity<Booking>(b =>
+            {
+                b.HasKey(a => a.Id);
+                b.Property(a => a.Id).IsRequired().HasMaxLength(64);
+                b.Property(b => b.Title).IsRequired().HasMaxLength(128);
+                b.Property(b => b.Description).IsRequired().HasColumnType("text").HasMaxLength(512);
+                b.Property(a => a.UpdatedAt).HasColumnType("timestamp with time zone");
+                b.Property(a => a.CreatedAt)
+                    .IsRequired()
+                    .HasColumnType("timestamp with time zone")
+                    .ValueGeneratedOnAdd()
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                b.Property(e => e.ArchivedAt).HasColumnType("timestamp with time zone");
+            });
+
+            builder.Entity<Order>(o =>
+            {
+                o.HasKey(a => a.Id);
+                o.Property(a => a.Id).IsRequired().HasMaxLength(64);
+                o.Property(a => a.TotalAmount)
+                    .IsRequired()
+                    .HasColumnType("decimal(18,2)")
+                    .HasDefaultValue(0);
+                o.Property(a => a.ReductionAmount)
+                    .HasColumnType("decimal(18,2)")
+                    .HasDefaultValue(0);
+                o.Property(a => a.ReductionPercentage).HasDefaultValue(0);
+                o.Property(a => a.TotalAmount)
+                    .IsRequired()
+                    .HasColumnType("decimal(18,2)")
+                    .HasDefaultValue(0);
+                o.Property(a => a.UpdatedAt).HasColumnType("timestamp with time zone");
+                o.Property(a => a.CreatedAt)
+                    .IsRequired()
+                    .HasColumnType("timestamp with time zone")
+                    .ValueGeneratedOnAdd()
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                o.Property(e => e.ArchivedAt).HasColumnType("timestamp with time zone");
             });
 
             //relationships
@@ -95,10 +178,40 @@ namespace MainBoilerPlate.Contexts
                 .WithMany()
                 .HasForeignKey(u => u.GenderId);
 
-            builder.Entity<UserApp>()
+            builder
+                .Entity<UserApp>()
                 .HasMany(u => u.Adresses)
                 .WithOne(a => a.User)
                 .HasForeignKey(a => a.UserId);
+
+            // Slot => slotType
+            builder.Entity<Slot>().HasOne(s => s.Type).WithMany().HasForeignKey(s => s.TypeId);
+
+            // Booking => Order, Student, slot
+            builder
+                .Entity<Booking>()
+                .HasOne(b => b.Order)
+                .WithMany(o => o.Bookings)
+                .HasForeignKey(b => b.OrderId);
+
+            builder
+                .Entity<Booking>()
+                .HasOne(b => b.Student)
+                .WithMany(u => u.BookingsForStudent)
+                .HasForeignKey(b => b.StudentId);
+
+            builder
+                .Entity<Booking>()
+                .HasOne(b => b.Slot)
+                .WithOne()
+                .HasForeignKey<Booking>(b => b.SlotId);
+
+            // Order => Student
+            builder
+                .Entity<Order>()
+                .HasOne(b => b.Student)
+                .WithMany(u => u.OrdersForStudent)
+                .HasForeignKey(b => b.StudentId);
 
             // Seed Roles
             List<RoleApp> roles = new()
@@ -119,9 +232,16 @@ namespace MainBoilerPlate.Contexts
                 },
                 new RoleApp
                 {
-                    Id = EnvironmentVariables.ROLE_USER,
-                    Name = "User",
-                    NormalizedName = "USER",
+                    Id = EnvironmentVariables.ROLE_TEACHER,
+                    Name = "Teacher",
+                    NormalizedName = "TEACHER",
+                    CreatedAt = DateTime.UtcNow,
+                },
+                new RoleApp
+                {
+                    Id = EnvironmentVariables.ROLE_STUDENT,
+                    Name = "Student",
+                    NormalizedName = "STUDENT",
                     CreatedAt = DateTime.UtcNow,
                 },
             };

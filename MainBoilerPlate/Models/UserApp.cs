@@ -20,5 +20,9 @@ namespace MainBoilerPlate.Models
 
         // address
         public ICollection<Address>? Adresses { get; set; }
+        public ICollection<Booking>? BookingsForStudent { get; set; }
+
+        // Orders
+        public ICollection<Order>? OrdersForStudent { get; set; }
     }
 }

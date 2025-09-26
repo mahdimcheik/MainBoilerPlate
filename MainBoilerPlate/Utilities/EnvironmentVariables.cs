@@ -1,4 +1,4 @@
-﻿namespace MainBoilerPlate.Utilities
+namespace MainBoilerPlate.Utilities
 {
     public static class EnvironmentVariables
     {
@@ -41,8 +41,10 @@
             GetEnvVarGuid("ROLE_SUPER_ADMIN", "bde5556b-562d-431f-9ff9-d31a5f5cb8c5");
         public static Guid ROLE_ADMIN =>
             GetEnvVarGuid("ROLE_ADMIN", "4a5eaf2f-0496-4035-a4b7-9210da39501c");
-        public static Guid ROLE_USER =>
-            GetEnvVarGuid("ROLE_USER", "87a0a5ed-c7bb-4394-a163-7ed7560b3703");
+        public static Guid ROLE_TEACHER =>
+            GetEnvVarGuid("ROLE_TEACHER", "87a0a5ed-c7bb-4394-a163-7ed7560b3703");
+        public static Guid ROLE_STUDENT =>
+            GetEnvVarGuid("ROLE_STUDENT", "87a0a5ed-c7bb-4394-a163-7ed7560b4a01");
 
         // Genders
         public static Guid GENDER_MALE =>

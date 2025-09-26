@@ -84,6 +84,55 @@ namespace MainBoilerPlate.Migrations
                     b.ToTable("Addresses", (string)null);
                 });
 
+            modelBuilder.Entity("MainBoilerPlate.Models.Booking", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(64)
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("ArchivedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SlotId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("SlotId")
+                        .IsUnique();
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("Bookings", (string)null);
+                });
+
             modelBuilder.Entity("MainBoilerPlate.Models.Gender", b =>
                 {
                     b.Property<Guid>("Id")
@@ -121,6 +170,55 @@ namespace MainBoilerPlate.Migrations
                     b.ToTable("Genders", (string)null);
                 });
 
+            modelBuilder.Entity("MainBoilerPlate.Models.Order", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(64)
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("ArchivedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<DateTimeOffset>("OrderDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("OrderNumber")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("ReductionAmount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(18,2)")
+                        .HasDefaultValue(0m);
+
+                    b.Property<int>("ReductionPercentage")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("TotalAmount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(18,2)")
+                        .HasDefaultValue(0m);
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("Orders", (string)null);
+                });
+
             modelBuilder.Entity("MainBoilerPlate.Models.RoleApp", b =>
                 {
                     b.Property<Guid>("Id")
@@ -150,6 +248,9 @@ namespace MainBoilerPlate.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
 
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
@@ -162,24 +263,107 @@ namespace MainBoilerPlate.Migrations
                         new
                         {
                             Id = new Guid("bde5556b-562d-431f-9ff9-d31a5f5cb8c5"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 9, 25, 20, 54, 52, 105, DateTimeKind.Unspecified).AddTicks(3952), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 9, 26, 15, 0, 31, 983, DateTimeKind.Unspecified).AddTicks(9307), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN"
                         },
                         new
                         {
                             Id = new Guid("4a5eaf2f-0496-4035-a4b7-9210da39501c"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 9, 25, 20, 54, 52, 105, DateTimeKind.Unspecified).AddTicks(3970), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 9, 26, 15, 0, 31, 983, DateTimeKind.Unspecified).AddTicks(9324), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = new Guid("87a0a5ed-c7bb-4394-a163-7ed7560b3703"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 9, 25, 20, 54, 52, 105, DateTimeKind.Unspecified).AddTicks(3975), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "User",
-                            NormalizedName = "USER"
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 9, 26, 15, 0, 31, 983, DateTimeKind.Unspecified).AddTicks(9329), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "Teacher",
+                            NormalizedName = "TEACHER"
+                        },
+                        new
+                        {
+                            Id = new Guid("87a0a5ed-c7bb-4394-a163-7ed7560b4a01"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 9, 26, 15, 0, 31, 983, DateTimeKind.Unspecified).AddTicks(9339), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "Student",
+                            NormalizedName = "STUDENT"
                         });
+                });
+
+            modelBuilder.Entity("MainBoilerPlate.Models.Slot", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(64)
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("ArchivedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<DateTimeOffset>("DateFrom")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("DateTo")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("TeacherId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TypeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TeacherId");
+
+                    b.HasIndex("TypeId");
+
+                    b.ToTable("Slots", (string)null);
+                });
+
+            modelBuilder.Entity("MainBoilerPlate.Models.TypeSlot", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(64)
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("ArchivedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Icon")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TypeSlots", (string)null);
                 });
 
             modelBuilder.Entity("MainBoilerPlate.Models.UserApp", b =>
@@ -254,6 +438,7 @@ namespace MainBoilerPlate.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
+                        .IsRequired()
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UserName")
@@ -388,6 +573,63 @@ namespace MainBoilerPlate.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("MainBoilerPlate.Models.Booking", b =>
+                {
+                    b.HasOne("MainBoilerPlate.Models.Order", "Order")
+                        .WithMany("Bookings")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainBoilerPlate.Models.Slot", "Slot")
+                        .WithOne()
+                        .HasForeignKey("MainBoilerPlate.Models.Booking", "SlotId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainBoilerPlate.Models.UserApp", "Student")
+                        .WithMany("BookingsForStudent")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Slot");
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("MainBoilerPlate.Models.Order", b =>
+                {
+                    b.HasOne("MainBoilerPlate.Models.UserApp", "Student")
+                        .WithMany("OrdersForStudent")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("MainBoilerPlate.Models.Slot", b =>
+                {
+                    b.HasOne("MainBoilerPlate.Models.UserApp", "Teacher")
+                        .WithMany()
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MainBoilerPlate.Models.TypeSlot", "Type")
+                        .WithMany()
+                        .HasForeignKey("TypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Teacher");
+
+                    b.Navigation("Type");
+                });
+
             modelBuilder.Entity("MainBoilerPlate.Models.UserApp", b =>
                 {
                     b.HasOne("MainBoilerPlate.Models.Gender", "Gender")
@@ -448,9 +690,18 @@ namespace MainBoilerPlate.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MainBoilerPlate.Models.Order", b =>
+                {
+                    b.Navigation("Bookings");
+                });
+
             modelBuilder.Entity("MainBoilerPlate.Models.UserApp", b =>
                 {
                     b.Navigation("Adresses");
+
+                    b.Navigation("BookingsForStudent");
+
+                    b.Navigation("OrdersForStudent");
                 });
 #pragma warning restore 612, 618
         }
