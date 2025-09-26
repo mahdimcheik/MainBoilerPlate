@@ -48,25 +48,6 @@ namespace MainBoilerPlate.Services
             await smtpClient.SendMailAsync(mailMessage);
         }
 
-        public async Task SendResetPassword(UserApp receiver, string resetLink)
-        {
-            dynamic model = new ResetPasswordModel(
-                receiver,
-                resetLink,
-                EnvironmentVariables.API_FRONT_URL
-            );
-            var template = await CompileTemplate("resetPassword", model);
-            MailApp mailApp = new MailApp
-            {
-                MailFrom = EnvironmentVariables.DO_NO_REPLY_MAIL,
-                MailTo = receiver.Email!,
-                MailSubject = "Réinitialisation de votre mot de passe",
-                MailBody = template,
-            };
-
-            await SendEmail(mailApp);
-        }
-
         public async Task SendConfirmAccount(UserApp receiver, string confirmLink)
         {
             try
@@ -77,7 +58,7 @@ namespace MainBoilerPlate.Services
                     EnvironmentVariables.API_FRONT_URL
                 );
 
-                var template = await CompileTemplate("ConfirmAccountTemplate.cshtml", model);
+                string template = await _razorLightEngine.CompileRenderAsync("ConfirmAccountTemplate.cshtml", model);     
 
                 MailApp mailApp = new MailApp
                 {
@@ -95,10 +76,32 @@ namespace MainBoilerPlate.Services
             }
         }
 
-        private async Task<string> CompileTemplate(string templateName, ConfirmMailModel model)
+        public async Task SendResetPasswordAccount(UserApp receiver, string confirmLink)
         {
-            string htmlContent = await _razorLightEngine.CompileRenderAsync(templateName, model);
-            return htmlContent;
+            try
+            {
+                var model = new ResetPasswordModel(
+                    receiver,
+                    confirmLink,
+                    EnvironmentVariables.API_FRONT_URL
+                );
+
+                string template = await _razorLightEngine.CompileRenderAsync("ForgotPasswordTemplate.cshtml", model);
+
+                MailApp mailApp = new MailApp
+                {
+                    MailFrom = EnvironmentVariables.DO_NO_REPLY_MAIL,
+                    MailTo = receiver.Email!,
+                    MailSubject = "Récupérer votre mot de passe",
+                    MailBody = template,
+                };
+
+                await SendEmail(mailApp);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
     }
 }
