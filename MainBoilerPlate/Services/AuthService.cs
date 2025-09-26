@@ -571,7 +571,7 @@ namespace MainBoilerPlate.Services
 
             var confirmationLink =
                 EnvironmentVariables.API_BACK_URL
-                + "/users/email-confirmation?userId="
+                + "/auth/email-confirmation?userId="
                 + user.Id
                 + "&confirmationToken="
                 + confirmationToken;
