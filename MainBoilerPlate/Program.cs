@@ -1,6 +1,7 @@
 using System.Text;
 using MainBoilerPlate.Contexts;
 using MainBoilerPlate.Models;
+using MainBoilerPlate.Services;
 using MainBoilerPlate.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -32,6 +33,10 @@ app.Run();
 #region Services
 static void ConfigureServices(IServiceCollection services)
 {
+    // add services
+    services.AddTransient<AuthService>();
+    services.AddTransient<MailService>();
+
     services.AddLogging(loggingBuilder =>
     {
         loggingBuilder.ClearProviders();

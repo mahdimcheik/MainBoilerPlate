@@ -9,6 +9,7 @@ namespace MainBoilerPlate.Contexts
     {
         public DbSet<UserApp> Users { get; set; }
         public DbSet<RoleApp> Roles { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Gender> Genders { get; set; }
         public DbSet<TypeSlot> TypeSlots { get; set; }
@@ -32,6 +33,7 @@ namespace MainBoilerPlate.Contexts
             builder.Entity<Slot>().ToTable("Slots");
             builder.Entity<Order>().ToTable("Orders");
             builder.Entity<Booking>().ToTable("Bookings");
+            builder.Entity<RefreshToken>().ToTable("RefreshTokens");
 
             // Entities  properties
 
@@ -41,6 +43,9 @@ namespace MainBoilerPlate.Contexts
                 e.Property(u => u.Id).IsRequired().HasMaxLength(64);
                 e.Property(u => u.FirstName).IsRequired().HasMaxLength(64);
                 e.Property(u => u.LastName).IsRequired().HasMaxLength(64);
+                e.Property(e => e.DateOfBirth)
+                    .IsRequired()
+                    .HasColumnType("timestamp with time zone");
                 e.Property(e => e.ArchivedAt).HasColumnType("timestamp with time zone");
                 e.Property(a => a.UpdatedAt).IsRequired().HasColumnType("timestamp with time zone");
 
@@ -66,6 +71,17 @@ namespace MainBoilerPlate.Contexts
                     .ValueGeneratedOnAdd()
                     .HasDefaultValueSql("CURRENT_TIMESTAMP");
             });
+
+            builder.Entity<RefreshToken>(r =>
+            {
+                r.HasKey(r => r.Id);
+                r.Property(r => r.Id).IsRequired().HasMaxLength(64);
+                r.Property(r => r.Token).IsRequired().HasMaxLength(256);
+                r.Property(r => r.ExpirationDate)
+                    .IsRequired()
+                    .HasColumnType("timestamp with time zone");
+            });
+
             builder.Entity<Gender>(g =>
             {
                 g.HasKey(g => g.Id);
@@ -178,6 +194,13 @@ namespace MainBoilerPlate.Contexts
                 .WithMany()
                 .HasForeignKey(u => u.GenderId);
 
+            // User => RefreshToken
+            builder
+                .Entity<RefreshToken>()
+                .HasOne(r => r.User)
+                .WithOne()
+                .HasForeignKey<RefreshToken>(a => a.UserId);
+
             builder
                 .Entity<UserApp>()
                 .HasMany(u => u.Adresses)
@@ -279,6 +302,13 @@ namespace MainBoilerPlate.Contexts
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {
             base.OnConfiguring(builder);
+        }
+        protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+        {
+            configurationBuilder
+                .Properties<DateTimeOffset>()
+                .HaveConversion<CustomDateTimeConversion>();
+            base.ConfigureConventions(configurationBuilder);
         }
     }
 }
