@@ -3,6 +3,7 @@ using System;
 using MainBoilerPlate.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainBoilerPlate.Migrations
 {
     [DbContext(typeof(MainContext))]
-    partial class MainContextModelSnapshot : ModelSnapshot
+    [Migration("20251004140114_table-status-account")]
+    partial class tablestatusaccount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -168,38 +171,6 @@ namespace MainBoilerPlate.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Genders", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("4a5eaf2f-0496-4035-a4b7-9210da39501c"),
-                            ArchivedAt = new DateTime(2025, 10, 4, 14, 20, 34, 770, DateTimeKind.Utc).AddTicks(1364),
-                            Color = "#ff69b4",
-                            CreatedAt = new DateTime(2025, 10, 4, 14, 20, 34, 770, DateTimeKind.Utc).AddTicks(1375),
-                            Icon = "",
-                            Name = "Female",
-                            UpdatedAt = new DateTime(2025, 10, 4, 14, 20, 34, 770, DateTimeKind.Utc).AddTicks(1362)
-                        },
-                        new
-                        {
-                            Id = new Guid("bde5556b-562d-431f-9ff9-d31a5f5cb8c5"),
-                            ArchivedAt = new DateTime(2025, 10, 4, 14, 20, 34, 770, DateTimeKind.Utc).AddTicks(1379),
-                            Color = "#fa69b4",
-                            CreatedAt = new DateTime(2025, 10, 4, 14, 20, 34, 770, DateTimeKind.Utc).AddTicks(1382),
-                            Icon = "",
-                            Name = "Male",
-                            UpdatedAt = new DateTime(2025, 10, 4, 14, 20, 34, 770, DateTimeKind.Utc).AddTicks(1378)
-                        },
-                        new
-                        {
-                            Id = new Guid("87a0a5ed-c7bb-4394-a163-7ed7560b3703"),
-                            ArchivedAt = new DateTime(2025, 10, 4, 14, 20, 34, 770, DateTimeKind.Utc).AddTicks(1384),
-                            Color = "#ab69b4",
-                            CreatedAt = new DateTime(2025, 10, 4, 14, 20, 34, 770, DateTimeKind.Utc).AddTicks(1388),
-                            Icon = "",
-                            Name = "Other",
-                            UpdatedAt = new DateTime(2025, 10, 4, 14, 20, 34, 770, DateTimeKind.Utc).AddTicks(1384)
-                        });
                 });
 
             modelBuilder.Entity("MainBoilerPlate.Models.Order", b =>
@@ -321,28 +292,28 @@ namespace MainBoilerPlate.Migrations
                         new
                         {
                             Id = new Guid("bde5556b-562d-431f-9ff9-d31a5f5cb8c5"),
-                            CreatedAt = new DateTime(2025, 10, 4, 14, 20, 34, 770, DateTimeKind.Utc).AddTicks(1271),
+                            CreatedAt = new DateTime(2025, 10, 4, 14, 1, 14, 223, DateTimeKind.Utc).AddTicks(8624),
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN"
                         },
                         new
                         {
                             Id = new Guid("4a5eaf2f-0496-4035-a4b7-9210da39501c"),
-                            CreatedAt = new DateTime(2025, 10, 4, 14, 20, 34, 770, DateTimeKind.Utc).AddTicks(1288),
+                            CreatedAt = new DateTime(2025, 10, 4, 14, 1, 14, 223, DateTimeKind.Utc).AddTicks(8644),
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = new Guid("87a0a5ed-c7bb-4394-a163-7ed7560b3703"),
-                            CreatedAt = new DateTime(2025, 10, 4, 14, 20, 34, 770, DateTimeKind.Utc).AddTicks(1294),
+                            CreatedAt = new DateTime(2025, 10, 4, 14, 1, 14, 223, DateTimeKind.Utc).AddTicks(8650),
                             Name = "Teacher",
                             NormalizedName = "TEACHER"
                         },
                         new
                         {
                             Id = new Guid("87a0a5ed-c7bb-4394-a163-7ed7560b4a01"),
-                            CreatedAt = new DateTime(2025, 10, 4, 14, 20, 34, 770, DateTimeKind.Utc).AddTicks(1299),
+                            CreatedAt = new DateTime(2025, 10, 4, 14, 1, 14, 223, DateTimeKind.Utc).AddTicks(8655),
                             Name = "Student",
                             NormalizedName = "STUDENT"
                         });
@@ -422,38 +393,6 @@ namespace MainBoilerPlate.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Statuses");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("bde5556b-562d-431f-9ff9-d31a5f5cb8c5"),
-                            ArchivedAt = new DateTime(2025, 10, 4, 14, 20, 34, 770, DateTimeKind.Utc).AddTicks(1419),
-                            Color = "#ff69b4",
-                            CreatedAt = new DateTime(2025, 10, 4, 14, 20, 34, 770, DateTimeKind.Utc).AddTicks(1423),
-                            Icon = "",
-                            Name = "Pending",
-                            UpdatedAt = new DateTime(2025, 10, 4, 14, 20, 34, 770, DateTimeKind.Utc).AddTicks(1418)
-                        },
-                        new
-                        {
-                            Id = new Guid("4a5eaf2f-0496-4035-a4b7-9210da39501c"),
-                            ArchivedAt = new DateTime(2025, 10, 4, 14, 20, 34, 770, DateTimeKind.Utc).AddTicks(1427),
-                            Color = "#fa69b4",
-                            CreatedAt = new DateTime(2025, 10, 4, 14, 20, 34, 770, DateTimeKind.Utc).AddTicks(1430),
-                            Icon = "",
-                            Name = "Confirmed",
-                            UpdatedAt = new DateTime(2025, 10, 4, 14, 20, 34, 770, DateTimeKind.Utc).AddTicks(1426)
-                        },
-                        new
-                        {
-                            Id = new Guid("87a0a5ed-c7bb-4394-a163-7ed7560b3703"),
-                            ArchivedAt = new DateTime(2025, 10, 4, 14, 20, 34, 770, DateTimeKind.Utc).AddTicks(1432),
-                            Color = "#ab69b4",
-                            CreatedAt = new DateTime(2025, 10, 4, 14, 20, 34, 770, DateTimeKind.Utc).AddTicks(1435),
-                            Icon = "",
-                            Name = "Banned",
-                            UpdatedAt = new DateTime(2025, 10, 4, 14, 20, 34, 770, DateTimeKind.Utc).AddTicks(1432)
-                        });
                 });
 
             modelBuilder.Entity("MainBoilerPlate.Models.TypeSlot", b =>

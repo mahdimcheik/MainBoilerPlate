@@ -54,6 +54,14 @@ namespace MainBoilerPlate.Utilities
         public static Guid GENDER_OTHER =>
             GetEnvVarGuid("GENDER_OTHER", "87a0a5ed-c7bb-4394-a163-7ed7560b3703");
 
+        // Statuses
+        public static Guid STATUS_PENDING =>
+            GetEnvVarGuid("GENDER_MALE", "bde5556b-562d-431f-9ff9-d31a5f5cb8c5");
+        public static Guid STATUS_CONFIRMED =>
+            GetEnvVarGuid("GENDER_FEMALE", "4a5eaf2f-0496-4035-a4b7-9210da39501c");
+        public static Guid STATUS_BANNED =>
+            GetEnvVarGuid("GENDER_OTHER", "87a0a5ed-c7bb-4394-a163-7ed7560b3703");
+
         // auth
         public static int COOKIES_VALIDITY_DAYS => GetEnvVarInt("COOKIES_VALIDITY_DAYS", 7);
         public static int TOKEN_VALIDITY_MINUTES => GetEnvVarInt("TOKEN_VALIDITY_MINUTES", 30);
@@ -63,6 +71,9 @@ namespace MainBoilerPlate.Utilities
         public static int SMTP_PORT => GetEnvVarInt("SMTP_PORT", 543);
         public static string SMTP_LOGIN => GetEnvVar("SMTP_LOGIN", "");
         public static string SMTP_KEY => GetEnvVar("SMTP_KEY", "");
-        public static string DO_NO_REPLY_MAIL => GetEnvVar("DO_NO_REPLY_MAIL", "do-not-reply@skillhive.fr");
+        public static string DO_NO_REPLY_MAIL => GetEnvVar("DO_NO_REPLY_MAIL", "do-not-reply@inspire.fr");
+        // default admin email and password
+        public static string SUPER_ADMIN_EMAIL => GetEnvVar("ADMIN_EMAIL", "super.admin@inspire.fr");
+        public static string SUPER_ADMIN_PASSWORD => GetEnvVar("ADMIN_PASSWORD", "SuperPassword123!");
     }
 }

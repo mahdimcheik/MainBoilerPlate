@@ -12,6 +12,7 @@ namespace MainBoilerPlate.Contexts
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Gender> Genders { get; set; }
+        public DbSet<StatusAccount> Statuses { get; set; }
         public DbSet<TypeSlot> TypeSlots { get; set; }
         public DbSet<Slot> Slots { get; set; }
         public DbSet<Order> Orders { get; set; }
@@ -97,6 +98,23 @@ namespace MainBoilerPlate.Contexts
                 g.Property(e => e.ArchivedAt).HasColumnType("timestamp with time zone");
                 g.Property(a => a.UpdatedAt).HasColumnType("timestamp with time zone");
             });
+
+            builder.Entity<StatusAccount>(g =>
+            {
+                g.HasKey(g => g.Id);
+                g.Property(g => g.Id).IsRequired().HasMaxLength(64);
+                g.Property(g => g.Name).IsRequired().HasMaxLength(64);
+                g.Property(g => g.Color).IsRequired().HasMaxLength(16);
+                g.Property(g => g.Icon).HasMaxLength(256);
+                g.Property(g => g.CreatedAt)
+                    .IsRequired()
+                    .HasColumnType("timestamp with time zone")
+                    .ValueGeneratedOnAdd()
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                g.Property(e => e.ArchivedAt).HasColumnType("timestamp with time zone");
+                g.Property(a => a.UpdatedAt).HasColumnType("timestamp with time zone");
+            });
+
             builder.Entity<Address>(a =>
             {
                 a.HasKey(a => a.Id);
@@ -193,6 +211,12 @@ namespace MainBoilerPlate.Contexts
                 .HasOne(u => u.Gender)
                 .WithMany()
                 .HasForeignKey(u => u.GenderId);
+
+            builder
+                .Entity<UserApp>()
+                .HasOne(u => u.Status)
+                .WithMany()
+                .HasForeignKey(u => u.StatusId);
 
             // User => RefreshToken
             builder
@@ -297,12 +321,47 @@ namespace MainBoilerPlate.Contexts
                     CreatedAt = DateTime.UtcNow,
                 },
             };
+
+            builder.Entity<Gender>().HasData(genders);
+
+            // seed statuses for account
+            List<StatusAccount> statuses = new()
+            {
+                new StatusAccount
+                {
+                    Id = EnvironmentVariables.STATUS_PENDING,
+                    Name = "Pending",
+                    Color = "#ff69b4",
+                    Icon = "",
+                    CreatedAt = DateTime.UtcNow,
+                },
+                new StatusAccount
+                {
+                    Id = EnvironmentVariables.STATUS_CONFIRMED,
+                    Name = "Confirmed",
+                    Color = "#fa69b4",
+                    Icon = "",
+                    CreatedAt = DateTime.UtcNow,
+                },
+                new StatusAccount
+                {
+                    Id = EnvironmentVariables.STATUS_BANNED,
+                    Name = "Banned",
+                    Color = "#ab69b4",
+                    Icon = "",
+                    CreatedAt = DateTime.UtcNow,
+                },
+            };
+
+            builder.Entity<StatusAccount>().HasData(statuses);
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {
             base.OnConfiguring(builder);
         }
+
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
         {
             configurationBuilder

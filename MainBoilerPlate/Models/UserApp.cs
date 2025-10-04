@@ -20,6 +20,12 @@ namespace MainBoilerPlate.Models
         [ForeignKey(nameof(GenderId))]
         public Gender? Gender { get; set; }
 
+        // Status account
+        public Guid StatusId { get; set; }
+
+        [ForeignKey(nameof(StatusId))]
+        public StatusAccount Status{ get; set; }
+
         // address
         public ICollection<Address>? Adresses { get; set; }
         public ICollection<Booking>? BookingsForStudent { get; set; }

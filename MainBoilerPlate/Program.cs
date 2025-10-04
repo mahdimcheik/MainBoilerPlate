@@ -23,6 +23,9 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<MainContext>();
     context.Database.Migrate();
+
+    // Seed default users
+    SeedUsers(scope.ServiceProvider);
 }
 
 // Configurer le pipeline de middleware
@@ -255,5 +258,43 @@ static void ConfigureMiddlewarePipeline(WebApplication app)
     app.UseAuthorization();
 
     app.MapControllers();
+}
+#endregion
+
+#region seed data
+static void SeedUsers(IServiceProvider serviceProvider)
+{
+    using (var scope = serviceProvider.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<MainContext>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserApp>>();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<RoleApp>>();
+
+        // Seed a default super admin user
+        var superAdminEmail = new UserApp
+        {
+            FirstName = "Super",
+            LastName = "Admin",
+            UserName = EnvironmentVariables.SUPER_ADMIN_EMAIL,
+            Email = EnvironmentVariables.SUPER_ADMIN_EMAIL,
+            EmailConfirmed = true,
+            DateOfBirth = new DateTime(1986, 04, 21),
+            StatusId = EnvironmentVariables.STATUS_CONFIRMED,
+        };
+        var superAdminPassword = EnvironmentVariables.SUPER_ADMIN_PASSWORD;
+        if (userManager.FindByEmailAsync(superAdminEmail.Email).Result == null)
+        {
+            var createPowerUser = userManager.CreateAsync(superAdminEmail, superAdminPassword).Result;
+            if (createPowerUser.Succeeded)
+            {
+                if (!roleManager.RoleExistsAsync("SuperAdmin").Result)
+                {
+                    var role = new RoleApp { Name = "SuperAdmin" };
+                    roleManager.CreateAsync(role).Wait();
+                }
+                userManager.AddToRoleAsync(superAdminEmail, "SuperAdmin").Wait();
+            }
+        }
+    }
 }
 #endregion

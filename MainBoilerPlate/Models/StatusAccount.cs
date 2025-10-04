@@ -2,7 +2,7 @@ using MainBoilerPlate.Models.Generics;
 
 namespace MainBoilerPlate.Models
 {
-    public class Gender : BaseModelOption
+    public class StatusAccount : BaseModelOption
     {
     }
 }
