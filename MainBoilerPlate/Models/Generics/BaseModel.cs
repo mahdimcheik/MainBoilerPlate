@@ -18,8 +18,9 @@ namespace MainBoilerPlate.Models.Generics
     public abstract class BaseModel : IUpdateable, ICreatable, IArchivable
     {
         [Key]
-        public Guid Id { get; set; }
-        public DateTimeOffset CreatedAt { get; set; } = DateTime.UtcNow;
+        public required Guid Id { get; set; }
+        [Required]
+        public required DateTimeOffset CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTimeOffset? UpdatedAt { get; set; } = DateTime.UtcNow;
         public DateTimeOffset? ArchivedAt { get; set; } = DateTime.UtcNow;
     }

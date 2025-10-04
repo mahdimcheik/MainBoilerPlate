@@ -24,7 +24,7 @@ namespace MainBoilerPlate.Models
         public Guid StatusId { get; set; }
 
         [ForeignKey(nameof(StatusId))]
-        public StatusAccount Status{ get; set; }
+        public StatusAccount Status { get; set; }
 
         // address
         public ICollection<Address>? Adresses { get; set; }
@@ -36,12 +36,22 @@ namespace MainBoilerPlate.Models
 
     public class UserResponseDTO
     {
+        [Required]
         public Guid Id { get; set; }
-        public string? FirstName { get; set; }
-        public string? LastName { get; set; }
+
+        [Required]
+        public string FirstName { get; set; }
+
+        [Required]
+        public string LastName { get; set; }
+
+        [Required]
         public string Email { get; set; } = null!;
-        public StatusAccountDTO Status { get; set; }
-        public ICollection<string>? Roles { get; set; }
+
+        public StatusAccountDTO? Status { get; set; }
+
+        [Required]
+        public ICollection<string> Roles { get; set; }
 
         public UserResponseDTO(UserApp user, List<string>? roles)
         {
@@ -50,7 +60,7 @@ namespace MainBoilerPlate.Models
             LastName = user.LastName;
             Email = user.Email;
             Roles = roles;
-            Status = new StatusAccountDTO(user.Status);
+            Status = user.Status is null ? null : new StatusAccountDTO(user.Status);
         }
     }
 
@@ -84,6 +94,7 @@ namespace MainBoilerPlate.Models
 
     public class UserCreateDTO
     {
+        [Required]
         [EmailAddress]
         public string Email { get; set; }
 
@@ -108,71 +119,92 @@ namespace MainBoilerPlate.Models
                 Email = Email,
                 FirstName = FirstName,
                 LastName = LastName,
-                DateOfBirth = DateOfBirth
+                DateOfBirth = DateOfBirth,
             };
         }
     }
 
     public class PasswordResetResponseDTO
     {
-        public string ResetToken { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public Guid Id { get; set; }
+        [Required]
+        public required string ResetToken { get; set; } = string.Empty;
+
+        [Required]
+        public required string Email { get; set; } = string.Empty;
+
+        [Required]
+        public required Guid Id { get; set; }
     }
 
     public class ForgotPasswordInput
     {
         [Required(ErrorMessage = "Email required")]
         [DataType(DataType.EmailAddress)]
-        public string Email { get; set; }
+        public required string Email { get; set; }
     }
 
     public class ChangePasswordInput
     {
-        public string OldPassword { get; set; }
-        public string NewPassword { get; set; }
-        public string NewPasswordConfirmation { get; set; }
+        [Required]
+        public required string OldPassword { get; set; }
+
+        [Required]
+        public required string NewPassword { get; set; }
+
+        [Required]
+        public required string NewPasswordConfirmation { get; set; }
     }
 
     public class PasswordRecoveryInput
     {
         [Required(ErrorMessage = "UserId required")]
-        public string UserId { get; set; }
+        public required string UserId { get; set; }
 
         [Required(ErrorMessage = "ConfirmationToken required")]
-        public string ResetToken { get; set; }
+        public required string ResetToken { get; set; }
 
         [Required(ErrorMessage = "Password required")]
-        public string Password { get; set; }
+        public required string Password { get; set; }
 
         [Required(ErrorMessage = "PasswordConfirmation required")]
-        public string PasswordConfirmation { get; set; }
+        public required string PasswordConfirmation { get; set; }
     }
 
     public class LoginOutputDTO
     {
-        public string Token { get; set; } = null!;
-        public string RefreshToken { get; set; } = null!;
-        public UserResponseDTO User { get; set; } = null!;
+        [Required]
+        public required string Token { get; set; } = null!;
+
+        [Required]
+        public required string RefreshToken { get; set; } = null!;
+
+        [Required]
+        public required UserResponseDTO User { get; set; } = null!;
     }
 
     public class UserUpdateDTO
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public DateTimeOffset DateOfBirth { get; set; }
+        [Required]
+        public required string FirstName { get; set; }
+        [Required]
+        public required string LastName { get; set; }
+        [Required]
+        public required DateTimeOffset DateOfBirth { get; set; }
 
         public void UpdateUser(UserApp user)
         {
             user.FirstName = FirstName;
             user.LastName = LastName;
-            user.DateOfBirth = DateOfBirth;          
+            user.DateOfBirth = DateOfBirth;
         }
     }
 
     public class UserInfosWithtoken
     {
-        public string Token { get; set; }
-        public UserResponseDTO User { get; set; }
+        [Required]
+        public required string Token { get; set; }
+
+        [Required]
+        public required UserResponseDTO User { get; set; }
     }
 }
