@@ -265,7 +265,7 @@ namespace MainBoilerPlate.Services
             var refreshTokenDB = await context
                 .RefreshTokens.Include(x => x.User)
                 .FirstOrDefaultAsync(x =>
-                    x.Token == refreshToken && x.ExpirationDate < DateTimeOffset.UtcNow
+                    x.Token == refreshToken && x.ExpirationDate > DateTimeOffset.UtcNow
                 );
 
             if (refreshTokenDB is null || refreshTokenDB.User is null)
