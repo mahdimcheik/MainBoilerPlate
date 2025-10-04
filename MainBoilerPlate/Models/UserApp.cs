@@ -96,6 +96,7 @@ namespace MainBoilerPlate.Models
         public string LastName { get; set; }
 
         public DateTimeOffset DateOfBirth { get; set; }
+        public Guid? RoleId { get; set; }
 
         public UserApp ToUser()
         {

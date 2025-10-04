@@ -265,28 +265,28 @@ namespace MainBoilerPlate.Contexts
             {
                 new RoleApp
                 {
-                    Id = EnvironmentVariables.ROLE_SUPER_ADMIN,
+                    Id = HardCode.ROLE_SUPER_ADMIN,
                     Name = "SuperAdmin",
                     NormalizedName = "SUPERADMIN",
                     CreatedAt = DateTime.UtcNow,
                 },
                 new RoleApp
                 {
-                    Id = EnvironmentVariables.ROLE_ADMIN,
+                    Id = HardCode.ROLE_ADMIN,
                     Name = "Admin",
                     NormalizedName = "ADMIN",
                     CreatedAt = DateTime.UtcNow,
                 },
                 new RoleApp
                 {
-                    Id = EnvironmentVariables.ROLE_TEACHER,
+                    Id = HardCode.ROLE_TEACHER,
                     Name = "Teacher",
                     NormalizedName = "TEACHER",
                     CreatedAt = DateTime.UtcNow,
                 },
                 new RoleApp
                 {
-                    Id = EnvironmentVariables.ROLE_STUDENT,
+                    Id = HardCode.ROLE_STUDENT,
                     Name = "Student",
                     NormalizedName = "STUDENT",
                     CreatedAt = DateTime.UtcNow,
@@ -298,7 +298,7 @@ namespace MainBoilerPlate.Contexts
             {
                 new Gender
                 {
-                    Id = EnvironmentVariables.GENDER_FEMALE,
+                    Id = HardCode.GENDER_FEMALE,
                     Name = "Female",
                     Color = "#ff69b4",
                     Icon = "",
@@ -306,7 +306,7 @@ namespace MainBoilerPlate.Contexts
                 },
                 new Gender
                 {
-                    Id = EnvironmentVariables.GENDER_MALE,
+                    Id = HardCode.GENDER_MALE,
                     Name = "Male",
                     Color = "#fa69b4",
                     Icon = "",
@@ -314,7 +314,7 @@ namespace MainBoilerPlate.Contexts
                 },
                 new Gender
                 {
-                    Id = EnvironmentVariables.GENDER_OTHER,
+                    Id = HardCode.GENDER_OTHER,
                     Name = "Other",
                     Color = "#ab69b4",
                     Icon = "",
@@ -329,7 +329,7 @@ namespace MainBoilerPlate.Contexts
             {
                 new StatusAccount
                 {
-                    Id = EnvironmentVariables.STATUS_PENDING,
+                    Id = HardCode.STATUS_PENDING,
                     Name = "Pending",
                     Color = "#ff69b4",
                     Icon = "",
@@ -337,7 +337,7 @@ namespace MainBoilerPlate.Contexts
                 },
                 new StatusAccount
                 {
-                    Id = EnvironmentVariables.STATUS_CONFIRMED,
+                    Id = HardCode.STATUS_CONFIRMED,
                     Name = "Confirmed",
                     Color = "#fa69b4",
                     Icon = "",
@@ -345,7 +345,7 @@ namespace MainBoilerPlate.Contexts
                 },
                 new StatusAccount
                 {
-                    Id = EnvironmentVariables.STATUS_BANNED,
+                    Id = HardCode.STATUS_BANNED,
                     Name = "Banned",
                     Color = "#ab69b4",
                     Icon = "",

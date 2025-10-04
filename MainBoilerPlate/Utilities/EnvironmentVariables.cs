@@ -36,32 +36,6 @@ namespace MainBoilerPlate.Utilities
         public static string DB_USER => GetEnvVar("DB_USER", "postgres");
         public static string DB_PASSWORD => GetEnvVar("DB_PASSWORD", "beecoming");
 
-        // Roles
-        public static Guid ROLE_SUPER_ADMIN =>
-            GetEnvVarGuid("ROLE_SUPER_ADMIN", "bde5556b-562d-431f-9ff9-d31a5f5cb8c5");
-        public static Guid ROLE_ADMIN =>
-            GetEnvVarGuid("ROLE_ADMIN", "4a5eaf2f-0496-4035-a4b7-9210da39501c");
-        public static Guid ROLE_TEACHER =>
-            GetEnvVarGuid("ROLE_TEACHER", "87a0a5ed-c7bb-4394-a163-7ed7560b3703");
-        public static Guid ROLE_STUDENT =>
-            GetEnvVarGuid("ROLE_STUDENT", "87a0a5ed-c7bb-4394-a163-7ed7560b4a01");
-
-        // Genders
-        public static Guid GENDER_MALE =>
-            GetEnvVarGuid("GENDER_MALE", "bde5556b-562d-431f-9ff9-d31a5f5cb8c5");
-        public static Guid GENDER_FEMALE =>
-            GetEnvVarGuid("GENDER_FEMALE", "4a5eaf2f-0496-4035-a4b7-9210da39501c");
-        public static Guid GENDER_OTHER =>
-            GetEnvVarGuid("GENDER_OTHER", "87a0a5ed-c7bb-4394-a163-7ed7560b3703");
-
-        // Statuses
-        public static Guid STATUS_PENDING =>
-            GetEnvVarGuid("GENDER_MALE", "bde5556b-562d-431f-9ff9-d31a5f5cb8c5");
-        public static Guid STATUS_CONFIRMED =>
-            GetEnvVarGuid("GENDER_FEMALE", "4a5eaf2f-0496-4035-a4b7-9210da39501c");
-        public static Guid STATUS_BANNED =>
-            GetEnvVarGuid("GENDER_OTHER", "87a0a5ed-c7bb-4394-a163-7ed7560b3703");
-
         // auth
         public static int COOKIES_VALIDITY_DAYS => GetEnvVarInt("COOKIES_VALIDITY_DAYS", 7);
         public static int TOKEN_VALIDITY_MINUTES => GetEnvVarInt("TOKEN_VALIDITY_MINUTES", 30);

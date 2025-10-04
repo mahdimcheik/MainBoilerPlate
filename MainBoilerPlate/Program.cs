@@ -279,7 +279,7 @@ static void SeedUsers(IServiceProvider serviceProvider)
             Email = EnvironmentVariables.SUPER_ADMIN_EMAIL,
             EmailConfirmed = true,
             DateOfBirth = new DateTime(1986, 04, 21),
-            StatusId = EnvironmentVariables.STATUS_CONFIRMED,
+            StatusId = HardCode.STATUS_CONFIRMED,
         };
         var superAdminPassword = EnvironmentVariables.SUPER_ADMIN_PASSWORD;
         if (userManager.FindByEmailAsync(superAdminEmail.Email).Result == null)

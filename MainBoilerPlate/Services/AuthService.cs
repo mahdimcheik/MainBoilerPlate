@@ -54,7 +54,6 @@ namespace MainBoilerPlate.Services
             if (isEmailAlreadyUsed)
             {
                 // Si l'adresse e-mail est déjà utilisée, mettre à jour la réponse et sauter vers l'étiquette UserAlreadyExisted
-
                 return new ResponseDTO<UserResponseDTO>
                 {
                     Status = 40,
@@ -64,6 +63,7 @@ namespace MainBoilerPlate.Services
             // Créer un nouvel utilisateur en utilisant les données du modèle et la base de données contextuelle
             UserApp newUser = newUserDTO.ToUser();
             newUser.CreatedAt = DateTime.Now;
+            newUser.StatusId = HardCode.STATUS_PENDING;
 
             // Obtenir la date actuelle
             DateTimeOffset date = DateTimeOffset.UtcNow;
@@ -74,7 +74,7 @@ namespace MainBoilerPlate.Services
             // Tenter d'ajouter l'utilisateur aux rôles spécifiés dans le modèle
             IdentityResult roleResult = await userManager.AddToRolesAsync(
                 user: newUser,
-                roles: ["Student"]
+                roles: newUserDTO.RoleId == HardCode.ROLE_TEACHER ? ["Teacher"] : ["Student"]
             );
 
             // Vérifier si la création de l'utilisateur a échoué
@@ -92,7 +92,7 @@ namespace MainBoilerPlate.Services
                 {
                     Message = "Création échouée",
                     Status = 401,
-                    Data = null, // Setting to null as errors are IEnumerable<string> not UserResponseDTO
+                    Data = null,
                 };
             }
 
@@ -102,11 +102,7 @@ namespace MainBoilerPlate.Services
             try
             {
                 var confirmationLink = await GenerateAccountConfirmationLink(newUser);
-                await mailService.SendConfirmAccount(
-                    newUser
-                    ,
-                    confirmationLink ?? ""
-                );
+                await mailService.SendConfirmAccount(newUser, confirmationLink ?? "");
 
                 // Retourne une réponse avec le statut déterminé, l'identifiant de l'utilisateur, le message de réponse et le statut complet
                 return new ResponseDTO<UserResponseDTO>
@@ -207,7 +203,7 @@ namespace MainBoilerPlate.Services
             {
                 Message = "Profil mis à jour",
                 Status = 200,
-                Data = new UserResponseDTO(user,userRoles.ToList()),
+                Data = new UserResponseDTO(user, userRoles.ToList()),
             };
         }
 
@@ -256,11 +252,17 @@ namespace MainBoilerPlate.Services
         {
             var refreshTokenDB = await context
                 .RefreshTokens.Include(x => x.User)
-                .FirstOrDefaultAsync(x => x.Token == refreshToken && x.ExpirationDate < DateTimeOffset.UtcNow);
+                .FirstOrDefaultAsync(x =>
+                    x.Token == refreshToken && x.ExpirationDate < DateTimeOffset.UtcNow
+                );
 
-            if (refreshTokenDB is null || refreshTokenDB.User is null )
+            if (refreshTokenDB is null || refreshTokenDB.User is null)
             {
-                return new ResponseDTO<LoginOutputDTO> { Message = "Token expiré ou non valide", Status = 401, };
+                return new ResponseDTO<LoginOutputDTO>
+                {
+                    Message = "Token expiré ou non valide",
+                    Status = 401,
+                };
             }
 
             httpContext.Response.Headers.Append(
@@ -275,11 +277,11 @@ namespace MainBoilerPlate.Services
                 Message = "Autorisation renouvelée",
                 Data = new LoginOutputDTO
                 {
-                    User = new UserResponseDTO(refreshTokenDB.User,userRoles.ToList()),
+                    User = new UserResponseDTO(refreshTokenDB.User, userRoles.ToList()),
                     Token = await GenerateAccessTokenAsync(refreshTokenDB.User),
-                    RefreshToken = refreshToken
+                    RefreshToken = refreshToken,
                 },
-                Status = 200
+                Status = 200,
             };
         }
 

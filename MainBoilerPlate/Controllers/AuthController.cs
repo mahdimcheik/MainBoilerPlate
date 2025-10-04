@@ -60,7 +60,7 @@ namespace MainBoilerPlate.Controllers
         [EnableCors]
         [Route("register")]
         [HttpPost]
-        public async Task<ActionResult<ResponseDTO<UserResponseDTO>?>> Register(
+        public async Task<ActionResult<ResponseDTO<UserResponseDTO>>> Register(
             [FromBody] UserCreateDTO model
         )
         {
@@ -88,7 +88,7 @@ namespace MainBoilerPlate.Controllers
         [EnableCors]
         [Route("update")]
         [HttpPatch]
-        public async Task<ActionResult<ResponseDTO<UserResponseDTO>?>> Update(
+        public async Task<ActionResult<ResponseDTO<UserResponseDTO>>> Update(
             [FromBody] UserUpdateDTO model
         )
         {
@@ -153,7 +153,7 @@ namespace MainBoilerPlate.Controllers
         [AllowAnonymous]
         [Route("email-confirmation")]
         [HttpGet]
-        public async Task<ActionResult<ResponseDTO<string?>?>> EmailConfirmation(
+        public async Task<ActionResult<ResponseDTO<string>>> EmailConfirmation(
             [FromQuery] string userId,
             [FromQuery] string confirmationToken
         )
