@@ -5,6 +5,7 @@ using System.Web;
 using MainBoilerPlate.Contexts;
 using MainBoilerPlate.Models;
 using MainBoilerPlate.Utilities;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -124,6 +125,17 @@ namespace MainBoilerPlate.Services
             }
         }
 
+
+        public async Task<ResponseDTO<bool>> SetStatusConfirmed(Guid UserId)
+        {
+            await context.Users.ExecuteUpdateAsync(up => up.SetProperty(u => u.StatusId, HardCode.STATUS_CONFIRMED));
+            return new ResponseDTO<bool>
+            {
+                Message = "Compte confirmé",
+                Status = 201
+            };
+        }
+
         /// <summary>
         /// Renvoie un email de confirmation à l'utilisateur
         /// </summary>
@@ -218,7 +230,7 @@ namespace MainBoilerPlate.Services
             string confirmationToken
         )
         {
-            UserApp? user = await userManager.FindByIdAsync(userId);
+            UserApp user = await userManager.FindByIdAsync(userId);
             if (user is null)
             {
                 return new ResponseDTO<string?> { Message = "Validation échouée", Status = 400 };

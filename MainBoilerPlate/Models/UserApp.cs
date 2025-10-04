@@ -167,4 +167,10 @@ namespace MainBoilerPlate.Models
             user.DateOfBirth = DateOfBirth;          
         }
     }
+
+    public class UserInfosWithtoken
+    {
+        public string Token { get; set; }
+        public UserResponseDTO User { get; set; }
+    }
 }

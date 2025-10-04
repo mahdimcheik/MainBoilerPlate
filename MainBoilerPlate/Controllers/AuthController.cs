@@ -11,6 +11,8 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace MainBoilerPlate.Controllers
 {
+    [Produces("application/json")]
+    [Consumes("application/json")]
     [Route("[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -58,8 +60,7 @@ namespace MainBoilerPlate.Controllers
         /// <returns>Résultat de l'opération.</returns>
         [AllowAnonymous]
         [EnableCors]
-        [Route("register")]
-        [HttpPost]
+        [HttpPost("register")]
         public async Task<ActionResult<ResponseDTO<UserResponseDTO>>> Register(
             [FromBody] UserCreateDTO model
         )
@@ -72,6 +73,23 @@ namespace MainBoilerPlate.Controllers
             }
 
             var response = await authService.Register(model);
+
+            if (response.Status == 200 || response.Status == 201)
+            {
+                return Ok(response);
+            }
+            return BadRequest(response);
+        }
+
+        //[Authorize(Roles = "Admin , SuperAdmin")]
+        [EnableCors]
+        [Route("confirm-status")]
+        [HttpGet]
+        public async Task<ActionResult<ResponseDTO<UserResponseDTO>>> ConfirmStatus(
+    [FromQuery] Guid userId
+)
+        {      
+            var response = await authService.SetStatusConfirmed(userId);
 
             if (response.Status == 200 || response.Status == 201)
             {
@@ -197,23 +215,23 @@ namespace MainBoilerPlate.Controllers
         /// </summary>
         /// <returns>Informations de l'utilisateur.</returns>
         [HttpGet("my-informations")]
-        public async Task<ActionResult<ResponseDTO<object>>> GetMyInformations()
+        public async Task<ActionResult<ResponseDTO<UserInfosWithtoken>>> GetMyInformations()
         {
             var user = CheckUser.GetUserFromClaim(HttpContext.User, _context);
 
             if (user == null)
                 return BadRequest(
-                    new ResponseDTO<object> { Message = "Vous n'êtes pas connecté", Status = 401 }
+                    new ResponseDTO<UserInfosWithtoken> { Message = "Vous n'êtes pas connecté", Status = 401 }
                 );
 
             var userRoles = await _userManager.GetRolesAsync(user);
 
             return Ok(
-                new ResponseDTO<object>
+                new ResponseDTO<UserInfosWithtoken>
                 {
                     Message = "Demande acceptée",
                     Status = 200,
-                    Data = new
+                    Data = new UserInfosWithtoken
                     {
                         Token = await authService.GenerateAccessTokenAsync(user),
                         User = new UserResponseDTO(user, userRoles.ToList()),
