@@ -40,6 +40,7 @@ namespace MainBoilerPlate.Models
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string Email { get; set; } = null!;
+        public StatusAccountDTO Status { get; set; }
         public ICollection<string>? Roles { get; set; }
 
         public UserResponseDTO(UserApp user, List<string>? roles)
@@ -49,6 +50,7 @@ namespace MainBoilerPlate.Models
             LastName = user.LastName;
             Email = user.Email;
             Roles = roles;
+            Status = new StatusAccountDTO(user.Status);
         }
     }
 
