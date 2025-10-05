@@ -20,6 +20,7 @@ namespace MainBoilerPlate.Contexts
 
         // cursus
         public DbSet<LevelCursus> LevelCursuses { get; set; }
+        public DbSet<CategoryCursus> CategoryCursuses { get; set; }
         public DbSet<Cursus> Cursuses { get; set; }
 
         public MainContext(DbContextOptions options)
@@ -122,7 +123,21 @@ namespace MainBoilerPlate.Contexts
             builder.Entity<LevelCursus>(g =>
             {
                 g.HasKey(g => g.Id);
-                g.Property(g => g.Id).IsRequired().HasMaxLength(64);
+                g.Property(g => g.Name).IsRequired().HasMaxLength(64);
+                g.Property(g => g.Color).IsRequired().HasMaxLength(16);
+                g.Property(g => g.Icon).HasMaxLength(256);
+                g.Property(g => g.CreatedAt)
+                    .IsRequired()
+                    .HasColumnType("timestamp with time zone")
+                    .ValueGeneratedOnAdd()
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                g.Property(e => e.ArchivedAt).HasColumnType("timestamp with time zone");
+                g.Property(a => a.UpdatedAt).HasColumnType("timestamp with time zone");
+            });
+
+            builder.Entity<CategoryCursus>(g =>
+            {
+                g.HasKey(g => g.Id);
                 g.Property(g => g.Name).IsRequired().HasMaxLength(64);
                 g.Property(g => g.Color).IsRequired().HasMaxLength(16);
                 g.Property(g => g.Icon).HasMaxLength(256);
@@ -238,8 +253,16 @@ namespace MainBoilerPlate.Contexts
             });
 
             //relationships
-            builder.Entity<UserApp>().HasMany(u => u.Adresses).WithOne(a => a.User).HasForeignKey(A => A.UserId);
-            builder.Entity<UserApp>().HasMany(u => u.Formations).WithOne(a => a.User).HasForeignKey(A => A.UserId);
+            builder
+                .Entity<UserApp>()
+                .HasMany(u => u.Adresses)
+                .WithOne(a => a.User)
+                .HasForeignKey(A => A.UserId);
+            builder
+                .Entity<UserApp>()
+                .HasMany(u => u.Formations)
+                .WithOne(a => a.User)
+                .HasForeignKey(A => A.UserId);
 
             builder
                 .Entity<UserApp>()
@@ -303,6 +326,24 @@ namespace MainBoilerPlate.Contexts
 
             // Cursus => Level
             builder.Entity<Cursus>().HasOne(c => c.Level).WithMany().HasForeignKey(c => c.LevelId);
+            builder
+                .Entity<Cursus>()
+                .HasMany(c => c.Categories)
+                .WithMany(cat => cat.Cursuses)
+                .UsingEntity<Dictionary<string, object>>(
+                    "CursusXCategories",
+                    j =>
+                        j.HasOne<CategoryCursus>()
+                            .WithMany()
+                            .HasForeignKey("CategorieId")
+                            .OnDelete(DeleteBehavior.Restrict),
+                    j =>
+                        j.HasOne<Cursus>()
+                            .WithMany()
+                            .HasForeignKey("CursusId")
+                            .OnDelete(DeleteBehavior.Restrict)
+                );
+            ;
 
             // Seed Roles
             List<RoleApp> roles = new()
@@ -399,7 +440,7 @@ namespace MainBoilerPlate.Contexts
 
             builder.Entity<StatusAccount>().HasData(statuses);
 
-            // seed level cursus 
+            // seed level cursus
             List<LevelCursus> levelsCursus = new()
             {
                 new LevelCursus
@@ -429,6 +470,45 @@ namespace MainBoilerPlate.Contexts
             };
 
             builder.Entity<LevelCursus>().HasData(levelsCursus);
+
+            // seed categories cursus
+            List<CategoryCursus> categoryCursuses = new()
+            {
+                new CategoryCursus
+                {
+                    Id = HardCode.CATEGORY_SOFT,
+                    Name = "Soft skills",
+                    Color = "#ff69b4",
+                    Icon = "",
+                    CreatedAt = DateTime.UtcNow,
+                },
+                new CategoryCursus
+                {
+                    Id = HardCode.CATEGORY_TECHNICS,
+                    Name = "Technics",
+                    Color = "#fa69b4",
+                    Icon = "",
+                    CreatedAt = DateTime.UtcNow,
+                },
+                new CategoryCursus
+                {
+                    Id = HardCode.CATEGORY_FRONT,
+                    Name = "Front-end",
+                    Color = "#ab69b4",
+                    Icon = "",
+                    CreatedAt = DateTime.UtcNow,
+                },
+                new CategoryCursus
+                {
+                    Id = HardCode.CATEGORY_BACK,
+                    Name = "Back-end",
+                    Color = "#ab69b4",
+                    Icon = "",
+                    CreatedAt = DateTime.UtcNow,
+                },
+            };
+
+            builder.Entity<CategoryCursus>().HasData(categoryCursuses);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
