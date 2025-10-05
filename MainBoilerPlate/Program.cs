@@ -39,6 +39,7 @@ static void ConfigureServices(IServiceCollection services)
     // add services
     services.AddTransient<AuthService>();
     services.AddTransient<MailService>();
+    services.AddTransient<UsersService>();
 
     services.AddLogging(loggingBuilder =>
     {
@@ -165,12 +166,15 @@ static void ConfigureSwagger(IServiceCollection services)
 {
     services.AddSwaggerGen(c =>
     {
-        c.SwaggerDoc("v1", new OpenApiInfo
-        {
-            Title = "MainBoilerPlate API",
-            Version = "v1",
-            Description = "API for MainBoilerPlate application"
-        });
+        c.SwaggerDoc(
+            "v1",
+            new OpenApiInfo
+            {
+                Title = "MainBoilerPlate API",
+                Version = "v1",
+                Description = "API for MainBoilerPlate application",
+            }
+        );
 
         var xmlFilename = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
         var xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, xmlFilename);
@@ -179,30 +183,36 @@ static void ConfigureSwagger(IServiceCollection services)
             c.IncludeXmlComments(xmlPath);
         }
 
-        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-        {
-            Name = "Authorization",
-            Type = SecuritySchemeType.ApiKey,
-            Scheme = "Bearer",
-            BearerFormat = "JWT",
-            In = ParameterLocation.Header,
-            Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\""
-        });
-
-        c.AddSecurityRequirement(new OpenApiSecurityRequirement
-        {
+        c.AddSecurityDefinition(
+            "Bearer",
+            new OpenApiSecurityScheme
             {
-                new OpenApiSecurityScheme
-                {
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
-                    }
-                },
-                new string[] {}
+                Name = "Authorization",
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer",
+                BearerFormat = "JWT",
+                In = ParameterLocation.Header,
+                Description =
+                    "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\"",
             }
-        });
+        );
+
+        c.AddSecurityRequirement(
+            new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer",
+                        },
+                    },
+                    new string[] { }
+                },
+            }
+        );
     });
 
     services.AddHttpClient();
@@ -222,17 +232,19 @@ static void ConfigureMiddlewarePipeline(WebApplication app)
     );
 
     // Add payload size limit middleware early in the pipeline
-    app.Use(async (context, next) =>
-    {
-        if (context.Request.ContentLength > 200_000_000)
+    app.Use(
+        async (context, next) =>
         {
-            context.Response.StatusCode = StatusCodes.Status413PayloadTooLarge;
-            await context.Response.WriteAsync("Payload Too Large");
-            return;
-        }
+            if (context.Request.ContentLength > 200_000_000)
+            {
+                context.Response.StatusCode = StatusCodes.Status413PayloadTooLarge;
+                await context.Response.WriteAsync("Payload Too Large");
+                return;
+            }
 
-        await next.Invoke();
-    });
+            await next.Invoke();
+        }
+    );
 
     app.UseStaticFiles();
 
@@ -284,7 +296,9 @@ static void SeedUsers(IServiceProvider serviceProvider)
         var superAdminPassword = EnvironmentVariables.SUPER_ADMIN_PASSWORD;
         if (userManager.FindByEmailAsync(superAdminEmail.Email).Result == null)
         {
-            var createPowerUser = userManager.CreateAsync(superAdminEmail, superAdminPassword).Result;
+            var createPowerUser = userManager
+                .CreateAsync(superAdminEmail, superAdminPassword)
+                .Result;
             if (createPowerUser.Succeeded)
             {
                 if (!roleManager.RoleExistsAsync("SuperAdmin").Result)
