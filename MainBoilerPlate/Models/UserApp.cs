@@ -42,6 +42,7 @@ namespace MainBoilerPlate.Models
         // cursus
         public ICollection<Cursus> TeacherCursuses { get; set; }
         public ICollection<Language> Languages { get; set; }
+        public ICollection<ProgrammingLanguage> ProgrammingLanguages { get; set; }
     }
 
     public class UserResponseDTO

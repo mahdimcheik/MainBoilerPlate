@@ -20,6 +20,7 @@ namespace MainBoilerPlate.Contexts
         public DbSet<Formation> Formations { get; set; }
         public DbSet<Experience> Experiences { get; set; }
         public DbSet<Language> Languages { get; set; }
+        public DbSet<ProgrammingLanguage> ProgrammingLanguages { get; set; }
 
         // cursus
         public DbSet<LevelCursus> LevelCursuses { get; set; }
@@ -46,6 +47,7 @@ namespace MainBoilerPlate.Contexts
             builder.Entity<Formation>().ToTable("Formations");
             builder.Entity<Experience>().ToTable("Experiences");
             builder.Entity<Language>().ToTable("Languages");
+            builder.Entity<ProgrammingLanguage>().ToTable("ProgrammingLanguages");
             builder.Entity<Cursus>().ToTable("Cursuses");
 
             // Entities  properties
@@ -292,6 +294,37 @@ namespace MainBoilerPlate.Contexts
                 e.Property(e => e.ArchivedAt).HasColumnType("timestamp with time zone");
             });
 
+            builder.Entity<Language>(e =>
+            {
+                e.HasKey(e => e.Id);
+                e.Property(e => e.Name).IsRequired().HasMaxLength(200);
+                e.Property(e => e.Color).IsRequired().HasMaxLength(200);
+                e.Property(e => e.Icon).HasMaxLength(200);
+                e.Property(e => e.CreatedAt)
+                    .IsRequired()
+                    .HasColumnType("timestamp with time zone")
+                    .ValueGeneratedOnAdd()
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                e.Property(e => e.UpdatedAt).HasColumnType("timestamp with time zone");
+                e.Property(e => e.ArchivedAt).HasColumnType("timestamp with time zone");
+            });
+
+            builder.Entity<ProgrammingLanguage>(e =>
+            {
+                e.HasKey(e => e.Id);
+                e.Property(e => e.Name).IsRequired().HasMaxLength(200);
+                e.Property(e => e.Color).IsRequired().HasMaxLength(200);
+                e.Property(e => e.Icon).HasMaxLength(200);
+                e.Property(e => e.Description).HasMaxLength(200);
+                e.Property(e => e.CreatedAt)
+                    .IsRequired()
+                    .HasColumnType("timestamp with time zone")
+                    .ValueGeneratedOnAdd()
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                e.Property(e => e.UpdatedAt).HasColumnType("timestamp with time zone");
+                e.Property(e => e.ArchivedAt).HasColumnType("timestamp with time zone");
+            });
+
             //relationships
             builder
                 .Entity<UserApp>()
@@ -344,7 +377,24 @@ namespace MainBoilerPlate.Contexts
                             .HasForeignKey("LanguageId")
                             .OnDelete(DeleteBehavior.Restrict)
                 );
-            ;
+
+            builder
+                .Entity<UserApp>()
+                .HasMany(c => c.ProgrammingLanguages)
+                .WithMany(cat => cat.Users)
+                .UsingEntity<Dictionary<string, object>>(
+                    "UsersXProgrammingLanguages",
+                    j =>
+                        j.HasOne<ProgrammingLanguage>()
+                            .WithMany()
+                            .HasForeignKey("UserId")
+                            .OnDelete(DeleteBehavior.Restrict),
+                    j =>
+                        j.HasOne<UserApp>()
+                            .WithMany()
+                            .HasForeignKey("ProgrammingLanguageId")
+                            .OnDelete(DeleteBehavior.Restrict)
+                );
 
             // User => RefreshToken
             builder
@@ -389,7 +439,7 @@ namespace MainBoilerPlate.Contexts
                 .HasForeignKey(b => b.StudentId);
 
             // Cursus => Level, UserApp
-            builder.Entity<Cursus>().HasOne(c => c.Level).WithMany().HasForeignKey(c => c.LevelId);            
+            builder.Entity<Cursus>().HasOne(c => c.Level).WithMany().HasForeignKey(c => c.LevelId);
 
             builder
                 .Entity<Cursus>()
@@ -408,7 +458,7 @@ namespace MainBoilerPlate.Contexts
                             .HasForeignKey("CursusId")
                             .OnDelete(DeleteBehavior.Restrict)
                 );
-            ;
+            
 
             // Seed Roles
             List<RoleApp> roles = new()
@@ -613,6 +663,45 @@ namespace MainBoilerPlate.Contexts
             };
 
             builder.Entity<Language>().HasData(languages);
+
+            // seed languages
+            List<ProgrammingLanguage> programmingLanguages = new()
+            {
+                new ProgrammingLanguage
+                {
+                    Id = HardCode.LANGUAGE_JS,
+                    Name = "JavaScript",
+                    Color = "#ff69b4",
+                    Icon = "",
+                    CreatedAt = DateTime.UtcNow,
+                },
+                new ProgrammingLanguage
+                {
+                    Id = HardCode.LANGUAGE_JAVA,
+                    Name = "Java",
+                    Color = "#fa69b4",
+                    Icon = "",
+                    CreatedAt = DateTime.UtcNow,
+                },
+                new ProgrammingLanguage
+                {
+                    Id = HardCode.LANGUAGE_CSHARP,
+                    Name = "C#",
+                    Color = "#ab69b4",
+                    Icon = "",
+                    CreatedAt = DateTime.UtcNow,
+                },
+                new ProgrammingLanguage
+                {
+                    Id = HardCode.LANGUAGE_CPP,
+                    Name = "C++",
+                    Color = "#ab69b4",
+                    Icon = "",
+                    CreatedAt = DateTime.UtcNow,
+                },
+            };
+
+            builder.Entity<ProgrammingLanguage>().HasData(programmingLanguages);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
