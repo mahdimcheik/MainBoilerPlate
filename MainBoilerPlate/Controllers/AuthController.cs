@@ -319,7 +319,7 @@ namespace MainBoilerPlate.Controllers
         [Route("refresh-token")]
         [AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult<LoginOutputDTO?>> UpdateRefreshToken()
+        public async Task<ActionResult<ResponseDTO<LoginOutputDTO?>>> UpdateRefreshToken()
         {
             if (!Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
             {

@@ -40,6 +40,10 @@ namespace MainBoilerPlate.Contexts
             builder.Entity<Order>().ToTable("Orders");
             builder.Entity<Booking>().ToTable("Bookings");
             builder.Entity<RefreshToken>().ToTable("RefreshTokens");
+            builder.Entity<Formation>().ToTable("Formations");
+            builder.Entity<Experience>().ToTable("Experiences");
+            builder.Entity<Language>().ToTable("Languages");
+            builder.Entity<Cursus>().ToTable("Cursuses");
 
             // Entities  properties
 
@@ -153,7 +157,6 @@ namespace MainBoilerPlate.Contexts
             builder.Entity<Cursus>(g =>
             {
                 g.HasKey(g => g.Id);
-                g.Property(g => g.Id).IsRequired().HasMaxLength(64);
                 g.Property(g => g.Name).IsRequired().HasMaxLength(64);
                 g.Property(g => g.Color).IsRequired().HasMaxLength(16);
                 g.Property(g => g.Icon).HasMaxLength(256);
@@ -263,6 +266,11 @@ namespace MainBoilerPlate.Contexts
                 .HasMany(u => u.Formations)
                 .WithOne(a => a.User)
                 .HasForeignKey(A => A.UserId);
+            builder
+                .Entity<UserApp>()
+                .HasMany(u => u.Experiences)
+                .WithOne(a => a.User)
+                .HasForeignKey(A => A.UserId);
 
             builder
                 .Entity<UserApp>()
@@ -281,6 +289,25 @@ namespace MainBoilerPlate.Contexts
                 .HasMany(u => u.TeacherCursuses)
                 .WithOne(c => c.Teacher)
                 .HasForeignKey(c => c.TeacherId);
+
+            builder
+                .Entity<UserApp>()
+                .HasMany(c => c.Languages)
+                .WithMany(cat => cat.Users)
+                .UsingEntity<Dictionary<string, object>>(
+                    "UsersXLanguages",
+                    j =>
+                        j.HasOne<Language>()
+                            .WithMany()
+                            .HasForeignKey("UserId")
+                            .OnDelete(DeleteBehavior.Restrict),
+                    j =>
+                        j.HasOne<UserApp>()
+                            .WithMany()
+                            .HasForeignKey("LanguageId")
+                            .OnDelete(DeleteBehavior.Restrict)
+                );
+            ;
 
             // User => RefreshToken
             builder
@@ -324,8 +351,9 @@ namespace MainBoilerPlate.Contexts
                 .WithMany(u => u.OrdersForStudent)
                 .HasForeignKey(b => b.StudentId);
 
-            // Cursus => Level
-            builder.Entity<Cursus>().HasOne(c => c.Level).WithMany().HasForeignKey(c => c.LevelId);
+            // Cursus => Level, UserApp
+            builder.Entity<Cursus>().HasOne(c => c.Level).WithMany().HasForeignKey(c => c.LevelId);            
+
             builder
                 .Entity<Cursus>()
                 .HasMany(c => c.Categories)
@@ -509,6 +537,45 @@ namespace MainBoilerPlate.Contexts
             };
 
             builder.Entity<CategoryCursus>().HasData(categoryCursuses);
+
+            // seed languages
+            List<Language> languages = new()
+            {
+                new Language
+                {
+                    Id = HardCode.LANGUAGE_FRENCH,
+                    Name = "French",
+                    Color = "#ff69b4",
+                    Icon = "",
+                    CreatedAt = DateTime.UtcNow,
+                },
+                new Language
+                {
+                    Id = HardCode.LANGUAGE_ENGLISH,
+                    Name = "English",
+                    Color = "#fa69b4",
+                    Icon = "",
+                    CreatedAt = DateTime.UtcNow,
+                },
+                new Language
+                {
+                    Id = HardCode.LANGUAGE_ARAB,
+                    Name = "Arab",
+                    Color = "#ab69b4",
+                    Icon = "",
+                    CreatedAt = DateTime.UtcNow,
+                },
+                new Language
+                {
+                    Id = HardCode.LANGUAGE_SPANISH,
+                    Name = "Spanich",
+                    Color = "#ab69b4",
+                    Icon = "",
+                    CreatedAt = DateTime.UtcNow,
+                },
+            };
+
+            builder.Entity<Language>().HasData(languages);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)

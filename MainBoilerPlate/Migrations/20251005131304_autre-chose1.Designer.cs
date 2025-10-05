@@ -3,6 +3,7 @@ using System;
 using MainBoilerPlate.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainBoilerPlate.Migrations
 {
     [DbContext(typeof(MainContext))]
-    partial class MainContextModelSnapshot : ModelSnapshot
+    [Migration("20251005131304_autre-chose1")]
+    partial class autrechose1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -185,42 +188,42 @@ namespace MainBoilerPlate.Migrations
                         new
                         {
                             Id = new Guid("4a5eaf2f-0496-4035-a4b7-9210da39501c"),
-                            ArchivedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5836),
+                            ArchivedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8820),
                             Color = "#ff69b4",
-                            CreatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5838),
+                            CreatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8822),
                             Icon = "",
                             Name = "Soft skills",
-                            UpdatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5835)
+                            UpdatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8819)
                         },
                         new
                         {
                             Id = new Guid("bde5556b-562d-431f-9ff9-d31a5f5cb8c5"),
-                            ArchivedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5841),
+                            ArchivedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8824),
                             Color = "#fa69b4",
-                            CreatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5842),
+                            CreatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8826),
                             Icon = "",
                             Name = "Technics",
-                            UpdatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5840)
+                            UpdatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8824)
                         },
                         new
                         {
                             Id = new Guid("87a0a5ed-c7bb-4394-a163-7ed7560b3703"),
-                            ArchivedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5844),
+                            ArchivedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8827),
                             Color = "#ab69b4",
-                            CreatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5846),
+                            CreatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8829),
                             Icon = "",
                             Name = "Front-end",
-                            UpdatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5844)
+                            UpdatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8827)
                         },
                         new
                         {
                             Id = new Guid("41f1f997-c392-4aac-bef0-fc8acaf109ec"),
-                            ArchivedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5848),
+                            ArchivedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8832),
                             Color = "#ab69b4",
-                            CreatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5849),
+                            CreatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8834),
                             Icon = "",
                             Name = "Back-end",
-                            UpdatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5847)
+                            UpdatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8832)
                         });
                 });
 
@@ -404,32 +407,32 @@ namespace MainBoilerPlate.Migrations
                         new
                         {
                             Id = new Guid("4a5eaf2f-0496-4035-a4b7-9210da39501c"),
-                            ArchivedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5716),
+                            ArchivedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8686),
                             Color = "#ff69b4",
-                            CreatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5720),
+                            CreatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8691),
                             Icon = "",
                             Name = "Female",
-                            UpdatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5712)
+                            UpdatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8684)
                         },
                         new
                         {
                             Id = new Guid("bde5556b-562d-431f-9ff9-d31a5f5cb8c5"),
-                            ArchivedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5723),
+                            ArchivedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8696),
                             Color = "#fa69b4",
-                            CreatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5725),
+                            CreatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8698),
                             Icon = "",
                             Name = "Male",
-                            UpdatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5723)
+                            UpdatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8696)
                         },
                         new
                         {
                             Id = new Guid("87a0a5ed-c7bb-4394-a163-7ed7560b3703"),
-                            ArchivedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5727),
+                            ArchivedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8700),
                             Color = "#ab69b4",
-                            CreatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5729),
+                            CreatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8701),
                             Icon = "",
                             Name = "Other",
-                            UpdatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5727)
+                            UpdatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8699)
                         });
                 });
 
@@ -462,48 +465,6 @@ namespace MainBoilerPlate.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Languages", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("bde5556b-562d-431f-9ff9-d31a5f5cb8c5"),
-                            ArchivedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5876),
-                            Color = "#ff69b4",
-                            CreatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5878),
-                            Icon = "",
-                            Name = "French",
-                            UpdatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5876)
-                        },
-                        new
-                        {
-                            Id = new Guid("4a5eaf2f-0496-4035-a4b7-9210da39501c"),
-                            ArchivedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5880),
-                            Color = "#fa69b4",
-                            CreatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5882),
-                            Icon = "",
-                            Name = "English",
-                            UpdatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5880)
-                        },
-                        new
-                        {
-                            Id = new Guid("87a0a5ed-c7bb-4394-a163-7ed7560b3703"),
-                            ArchivedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5883),
-                            Color = "#ab69b4",
-                            CreatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5885),
-                            Icon = "",
-                            Name = "Arab",
-                            UpdatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5883)
-                        },
-                        new
-                        {
-                            Id = new Guid("41f1f997-c392-4aac-bef0-fc8acaf109ec"),
-                            ArchivedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5931),
-                            Color = "#ab69b4",
-                            CreatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5933),
-                            Icon = "",
-                            Name = "Spanich",
-                            UpdatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5931)
-                        });
                 });
 
             modelBuilder.Entity("MainBoilerPlate.Models.LevelCursus", b =>
@@ -545,32 +506,32 @@ namespace MainBoilerPlate.Migrations
                         new
                         {
                             Id = new Guid("bde5556b-562d-431f-9ff9-d31a5f5cb8c5"),
-                            ArchivedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5802),
+                            ArchivedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8784),
                             Color = "#ff69b4",
-                            CreatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5804),
+                            CreatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8786),
                             Icon = "",
                             Name = "Beginner",
-                            UpdatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5801)
+                            UpdatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8783)
                         },
                         new
                         {
                             Id = new Guid("4a5eaf2f-0496-4035-a4b7-9210da39501c"),
-                            ArchivedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5806),
+                            ArchivedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8789),
                             Color = "#fa69b4",
-                            CreatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5808),
+                            CreatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8790),
                             Icon = "",
                             Name = "Intermediate",
-                            UpdatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5806)
+                            UpdatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8789)
                         },
                         new
                         {
                             Id = new Guid("87a0a5ed-c7bb-4394-a163-7ed7560b3703"),
-                            ArchivedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5809),
+                            ArchivedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8792),
                             Color = "#ab69b4",
-                            CreatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5811),
+                            CreatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8794),
                             Icon = "",
                             Name = "Advanced",
-                            UpdatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5809)
+                            UpdatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8792)
                         });
                 });
 
@@ -692,28 +653,28 @@ namespace MainBoilerPlate.Migrations
                         new
                         {
                             Id = new Guid("bde5556b-562d-431f-9ff9-d31a5f5cb8c5"),
-                            CreatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5624),
+                            CreatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8537),
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN"
                         },
                         new
                         {
                             Id = new Guid("4a5eaf2f-0496-4035-a4b7-9210da39501c"),
-                            CreatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5634),
+                            CreatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8550),
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = new Guid("87a0a5ed-c7bb-4394-a163-7ed7560b3703"),
-                            CreatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5639),
+                            CreatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8589),
                             Name = "Teacher",
                             NormalizedName = "TEACHER"
                         },
                         new
                         {
                             Id = new Guid("87a0a5ed-c7bb-4394-a163-7ed7560b4a01"),
-                            CreatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5641),
+                            CreatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8592),
                             Name = "Student",
                             NormalizedName = "STUDENT"
                         });
@@ -797,32 +758,32 @@ namespace MainBoilerPlate.Migrations
                         new
                         {
                             Id = new Guid("bde5556b-562d-431f-9ff9-d31a5f5cb8c5"),
-                            ArchivedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5763),
+                            ArchivedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8741),
                             Color = "#ff69b4",
-                            CreatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5765),
+                            CreatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8742),
                             Icon = "",
                             Name = "Pending",
-                            UpdatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5763)
+                            UpdatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8740)
                         },
                         new
                         {
                             Id = new Guid("4a5eaf2f-0496-4035-a4b7-9210da39501c"),
-                            ArchivedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5768),
+                            ArchivedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8745),
                             Color = "#fa69b4",
-                            CreatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5770),
+                            CreatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8746),
                             Icon = "",
                             Name = "Confirmed",
-                            UpdatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5768)
+                            UpdatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8745)
                         },
                         new
                         {
                             Id = new Guid("87a0a5ed-c7bb-4394-a163-7ed7560b3703"),
-                            ArchivedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5772),
+                            ArchivedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8748),
                             Color = "#ab69b4",
-                            CreatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5773),
+                            CreatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8750),
                             Icon = "",
                             Name = "Banned",
-                            UpdatedAt = new DateTime(2025, 10, 5, 13, 20, 53, 542, DateTimeKind.Utc).AddTicks(5771)
+                            UpdatedAt = new DateTime(2025, 10, 5, 13, 13, 3, 535, DateTimeKind.Utc).AddTicks(8748)
                         });
                 });
 

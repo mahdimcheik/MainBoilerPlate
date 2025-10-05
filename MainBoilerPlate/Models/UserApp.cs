@@ -31,6 +31,7 @@ namespace MainBoilerPlate.Models
         // address
         public ICollection<Address> Adresses { get; set; }
         public ICollection<Formation> Formations { get; set; }
+        public ICollection<Experience> Experiences { get; set; }
 
         // Bookings
         public ICollection<Booking> BookingsForStudent { get; set; }
@@ -40,6 +41,7 @@ namespace MainBoilerPlate.Models
 
         // cursus
         public ICollection<Cursus> TeacherCursuses { get; set; }
+        public ICollection<Language> Languages { get; set; }
     }
 
     public class UserResponseDTO
