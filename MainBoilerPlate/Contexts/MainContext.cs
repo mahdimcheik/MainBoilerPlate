@@ -398,6 +398,37 @@ namespace MainBoilerPlate.Contexts
             };
 
             builder.Entity<StatusAccount>().HasData(statuses);
+
+            // seed level cursus 
+            List<LevelCursus> levelsCursus = new()
+            {
+                new LevelCursus
+                {
+                    Id = HardCode.LEVEL_BEGINNER,
+                    Name = "Beginner",
+                    Color = "#ff69b4",
+                    Icon = "",
+                    CreatedAt = DateTime.UtcNow,
+                },
+                new LevelCursus
+                {
+                    Id = HardCode.LEVEL_INTERMEDIATE,
+                    Name = "Intermediate",
+                    Color = "#fa69b4",
+                    Icon = "",
+                    CreatedAt = DateTime.UtcNow,
+                },
+                new LevelCursus
+                {
+                    Id = HardCode.LEVEL_ADVANCED,
+                    Name = "Advanced",
+                    Color = "#ab69b4",
+                    Icon = "",
+                    CreatedAt = DateTime.UtcNow,
+                },
+            };
+
+            builder.Entity<LevelCursus>().HasData(levelsCursus);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
