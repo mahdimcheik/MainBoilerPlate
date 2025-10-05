@@ -3,6 +3,7 @@ using System;
 using MainBoilerPlate.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainBoilerPlate.Migrations
 {
     [DbContext(typeof(MainContext))]
-    partial class MainContextModelSnapshot : ModelSnapshot
+    [Migration("20251004201452_gend-status-mandary-with-default-values")]
+    partial class gendstatusmandarywithdefaultvalues
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,6 +29,7 @@ namespace MainBoilerPlate.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasMaxLength(64)
                         .HasColumnType("uuid");
 
                     b.Property<string>("AdditionalInfo")
@@ -87,6 +91,7 @@ namespace MainBoilerPlate.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasMaxLength(64)
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ArchivedAt")
@@ -131,104 +136,6 @@ namespace MainBoilerPlate.Migrations
                     b.ToTable("Bookings", (string)null);
                 });
 
-            modelBuilder.Entity("MainBoilerPlate.Models.Cursus", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(64)
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("ArchivedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Color")
-                        .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("character varying(16)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
-
-                    b.Property<string>("Icon")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("ImgUrl")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<Guid>("LevelId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
-
-                    b.Property<Guid>("TeacherId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LevelId");
-
-                    b.HasIndex("TeacherId");
-
-                    b.ToTable("Cursuses");
-                });
-
-            modelBuilder.Entity("MainBoilerPlate.Models.Formation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("ArchivedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("DateFrom")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DateTo")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Institution")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Formation");
-                });
-
             modelBuilder.Entity("MainBoilerPlate.Models.Gender", b =>
                 {
                     b.Property<Guid>("Id")
@@ -269,76 +176,40 @@ namespace MainBoilerPlate.Migrations
                         new
                         {
                             Id = new Guid("4a5eaf2f-0496-4035-a4b7-9210da39501c"),
-                            ArchivedAt = new DateTime(2025, 10, 5, 0, 3, 15, 830, DateTimeKind.Utc).AddTicks(269),
+                            ArchivedAt = new DateTime(2025, 10, 4, 20, 14, 51, 600, DateTimeKind.Utc).AddTicks(4590),
                             Color = "#ff69b4",
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 3, 15, 830, DateTimeKind.Utc).AddTicks(273),
+                            CreatedAt = new DateTime(2025, 10, 4, 20, 14, 51, 600, DateTimeKind.Utc).AddTicks(4594),
                             Icon = "",
                             Name = "Female",
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 3, 15, 830, DateTimeKind.Utc).AddTicks(267)
+                            UpdatedAt = new DateTime(2025, 10, 4, 20, 14, 51, 600, DateTimeKind.Utc).AddTicks(4589)
                         },
                         new
                         {
                             Id = new Guid("bde5556b-562d-431f-9ff9-d31a5f5cb8c5"),
-                            ArchivedAt = new DateTime(2025, 10, 5, 0, 3, 15, 830, DateTimeKind.Utc).AddTicks(277),
+                            ArchivedAt = new DateTime(2025, 10, 4, 20, 14, 51, 600, DateTimeKind.Utc).AddTicks(4598),
                             Color = "#fa69b4",
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 3, 15, 830, DateTimeKind.Utc).AddTicks(278),
+                            CreatedAt = new DateTime(2025, 10, 4, 20, 14, 51, 600, DateTimeKind.Utc).AddTicks(4599),
                             Icon = "",
                             Name = "Male",
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 3, 15, 830, DateTimeKind.Utc).AddTicks(276)
+                            UpdatedAt = new DateTime(2025, 10, 4, 20, 14, 51, 600, DateTimeKind.Utc).AddTicks(4597)
                         },
                         new
                         {
                             Id = new Guid("87a0a5ed-c7bb-4394-a163-7ed7560b3703"),
-                            ArchivedAt = new DateTime(2025, 10, 5, 0, 3, 15, 830, DateTimeKind.Utc).AddTicks(280),
+                            ArchivedAt = new DateTime(2025, 10, 4, 20, 14, 51, 600, DateTimeKind.Utc).AddTicks(4601),
                             Color = "#ab69b4",
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 3, 15, 830, DateTimeKind.Utc).AddTicks(282),
+                            CreatedAt = new DateTime(2025, 10, 4, 20, 14, 51, 600, DateTimeKind.Utc).AddTicks(4605),
                             Icon = "",
                             Name = "Other",
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 3, 15, 830, DateTimeKind.Utc).AddTicks(280)
+                            UpdatedAt = new DateTime(2025, 10, 4, 20, 14, 51, 600, DateTimeKind.Utc).AddTicks(4601)
                         });
-                });
-
-            modelBuilder.Entity("MainBoilerPlate.Models.LevelCursus", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(64)
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("ArchivedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Color")
-                        .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("character varying(16)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<string>("Icon")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("LevelCursuses");
                 });
 
             modelBuilder.Entity("MainBoilerPlate.Models.Order", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasMaxLength(64)
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ArchivedAt")
@@ -453,28 +324,28 @@ namespace MainBoilerPlate.Migrations
                         new
                         {
                             Id = new Guid("bde5556b-562d-431f-9ff9-d31a5f5cb8c5"),
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 3, 15, 830, DateTimeKind.Utc).AddTicks(188),
+                            CreatedAt = new DateTime(2025, 10, 4, 20, 14, 51, 600, DateTimeKind.Utc).AddTicks(4496),
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN"
                         },
                         new
                         {
                             Id = new Guid("4a5eaf2f-0496-4035-a4b7-9210da39501c"),
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 3, 15, 830, DateTimeKind.Utc).AddTicks(200),
+                            CreatedAt = new DateTime(2025, 10, 4, 20, 14, 51, 600, DateTimeKind.Utc).AddTicks(4511),
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = new Guid("87a0a5ed-c7bb-4394-a163-7ed7560b3703"),
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 3, 15, 830, DateTimeKind.Utc).AddTicks(203),
+                            CreatedAt = new DateTime(2025, 10, 4, 20, 14, 51, 600, DateTimeKind.Utc).AddTicks(4513),
                             Name = "Teacher",
                             NormalizedName = "TEACHER"
                         },
                         new
                         {
                             Id = new Guid("87a0a5ed-c7bb-4394-a163-7ed7560b4a01"),
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 3, 15, 830, DateTimeKind.Utc).AddTicks(205),
+                            CreatedAt = new DateTime(2025, 10, 4, 20, 14, 51, 600, DateTimeKind.Utc).AddTicks(4516),
                             Name = "Student",
                             NormalizedName = "STUDENT"
                         });
@@ -484,6 +355,7 @@ namespace MainBoilerPlate.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasMaxLength(64)
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ArchivedAt")
@@ -558,32 +430,32 @@ namespace MainBoilerPlate.Migrations
                         new
                         {
                             Id = new Guid("bde5556b-562d-431f-9ff9-d31a5f5cb8c5"),
-                            ArchivedAt = new DateTime(2025, 10, 5, 0, 3, 15, 830, DateTimeKind.Utc).AddTicks(309),
+                            ArchivedAt = new DateTime(2025, 10, 4, 20, 14, 51, 600, DateTimeKind.Utc).AddTicks(4686),
                             Color = "#ff69b4",
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 3, 15, 830, DateTimeKind.Utc).AddTicks(311),
+                            CreatedAt = new DateTime(2025, 10, 4, 20, 14, 51, 600, DateTimeKind.Utc).AddTicks(4688),
                             Icon = "",
                             Name = "Pending",
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 3, 15, 830, DateTimeKind.Utc).AddTicks(309)
+                            UpdatedAt = new DateTime(2025, 10, 4, 20, 14, 51, 600, DateTimeKind.Utc).AddTicks(4685)
                         },
                         new
                         {
                             Id = new Guid("4a5eaf2f-0496-4035-a4b7-9210da39501c"),
-                            ArchivedAt = new DateTime(2025, 10, 5, 0, 3, 15, 830, DateTimeKind.Utc).AddTicks(314),
+                            ArchivedAt = new DateTime(2025, 10, 4, 20, 14, 51, 600, DateTimeKind.Utc).AddTicks(4691),
                             Color = "#fa69b4",
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 3, 15, 830, DateTimeKind.Utc).AddTicks(315),
+                            CreatedAt = new DateTime(2025, 10, 4, 20, 14, 51, 600, DateTimeKind.Utc).AddTicks(4693),
                             Icon = "",
                             Name = "Confirmed",
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 3, 15, 830, DateTimeKind.Utc).AddTicks(313)
+                            UpdatedAt = new DateTime(2025, 10, 4, 20, 14, 51, 600, DateTimeKind.Utc).AddTicks(4691)
                         },
                         new
                         {
                             Id = new Guid("87a0a5ed-c7bb-4394-a163-7ed7560b3703"),
-                            ArchivedAt = new DateTime(2025, 10, 5, 0, 3, 15, 830, DateTimeKind.Utc).AddTicks(317),
+                            ArchivedAt = new DateTime(2025, 10, 4, 20, 14, 51, 600, DateTimeKind.Utc).AddTicks(4695),
                             Color = "#ab69b4",
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 3, 15, 830, DateTimeKind.Utc).AddTicks(320),
+                            CreatedAt = new DateTime(2025, 10, 4, 20, 14, 51, 600, DateTimeKind.Utc).AddTicks(4697),
                             Icon = "",
                             Name = "Banned",
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 3, 15, 830, DateTimeKind.Utc).AddTicks(317)
+                            UpdatedAt = new DateTime(2025, 10, 4, 20, 14, 51, 600, DateTimeKind.Utc).AddTicks(4694)
                         });
                 });
 
@@ -591,6 +463,7 @@ namespace MainBoilerPlate.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasMaxLength(64)
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ArchivedAt")
@@ -876,36 +749,6 @@ namespace MainBoilerPlate.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("MainBoilerPlate.Models.Cursus", b =>
-                {
-                    b.HasOne("MainBoilerPlate.Models.LevelCursus", "Level")
-                        .WithMany()
-                        .HasForeignKey("LevelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MainBoilerPlate.Models.UserApp", "Teacher")
-                        .WithMany("TeacherCursuses")
-                        .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Level");
-
-                    b.Navigation("Teacher");
-                });
-
-            modelBuilder.Entity("MainBoilerPlate.Models.Formation", b =>
-                {
-                    b.HasOne("MainBoilerPlate.Models.UserApp", "User")
-                        .WithMany("Formations")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("MainBoilerPlate.Models.Order", b =>
                 {
                     b.HasOne("MainBoilerPlate.Models.UserApp", "Student")
@@ -1026,11 +869,7 @@ namespace MainBoilerPlate.Migrations
 
                     b.Navigation("BookingsForStudent");
 
-                    b.Navigation("Formations");
-
                     b.Navigation("OrdersForStudent");
-
-                    b.Navigation("TeacherCursuses");
                 });
 #pragma warning restore 612, 618
         }

@@ -18,6 +18,10 @@ namespace MainBoilerPlate.Contexts
         public DbSet<Order> Orders { get; set; }
         public DbSet<Booking> Bookings { get; set; }
 
+        // cursus
+        public DbSet<LevelCursus> LevelCursuses { get; set; }
+        public DbSet<Cursus> Cursuses { get; set; }
+
         public MainContext(DbContextOptions options)
             : base(options) { }
 
@@ -115,10 +119,43 @@ namespace MainBoilerPlate.Contexts
                 g.Property(a => a.UpdatedAt).HasColumnType("timestamp with time zone");
             });
 
+            builder.Entity<LevelCursus>(g =>
+            {
+                g.HasKey(g => g.Id);
+                g.Property(g => g.Id).IsRequired().HasMaxLength(64);
+                g.Property(g => g.Name).IsRequired().HasMaxLength(64);
+                g.Property(g => g.Color).IsRequired().HasMaxLength(16);
+                g.Property(g => g.Icon).HasMaxLength(256);
+                g.Property(g => g.CreatedAt)
+                    .IsRequired()
+                    .HasColumnType("timestamp with time zone")
+                    .ValueGeneratedOnAdd()
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                g.Property(e => e.ArchivedAt).HasColumnType("timestamp with time zone");
+                g.Property(a => a.UpdatedAt).HasColumnType("timestamp with time zone");
+            });
+
+            builder.Entity<Cursus>(g =>
+            {
+                g.HasKey(g => g.Id);
+                g.Property(g => g.Id).IsRequired().HasMaxLength(64);
+                g.Property(g => g.Name).IsRequired().HasMaxLength(64);
+                g.Property(g => g.Color).IsRequired().HasMaxLength(16);
+                g.Property(g => g.Icon).HasMaxLength(256);
+                g.Property(g => g.ImgUrl).HasMaxLength(256);
+                g.Property(e => e.Description).HasMaxLength(512);
+                g.Property(g => g.CreatedAt)
+                    .IsRequired()
+                    .HasColumnType("timestamp with time zone")
+                    .ValueGeneratedOnAdd()
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                g.Property(e => e.ArchivedAt).HasColumnType("timestamp with time zone");
+                g.Property(a => a.UpdatedAt).HasColumnType("timestamp with time zone");
+            });
+
             builder.Entity<Address>(a =>
             {
                 a.HasKey(a => a.Id);
-                a.Property(a => a.Id).IsRequired().HasMaxLength(64);
                 a.Property(a => a.Street).IsRequired().HasMaxLength(128);
                 a.Property(a => a.City).IsRequired().HasMaxLength(64);
                 a.Property(a => a.State).IsRequired().HasMaxLength(64);
@@ -132,10 +169,10 @@ namespace MainBoilerPlate.Contexts
                 a.Property(e => e.ArchivedAt).HasColumnType("timestamp with time zone");
                 a.Property(a => a.UpdatedAt).HasColumnType("timestamp with time zone");
             });
+
             builder.Entity<Slot>(s =>
             {
                 s.HasKey(a => a.Id);
-                s.Property(a => a.Id).IsRequired().HasMaxLength(64);
                 s.Property(a => a.DateFrom).IsRequired().HasColumnType("timestamp with time zone");
                 s.Property(a => a.DateTo).IsRequired().HasColumnType("timestamp with time zone");
                 s.Property(a => a.UpdatedAt).HasColumnType("timestamp with time zone");
@@ -150,7 +187,6 @@ namespace MainBoilerPlate.Contexts
             builder.Entity<TypeSlot>(s =>
             {
                 s.HasKey(a => a.Id);
-                s.Property(a => a.Id).IsRequired().HasMaxLength(64);
                 s.Property(g => g.Name).IsRequired().HasMaxLength(64);
                 s.Property(g => g.Color).IsRequired().HasMaxLength(16);
                 s.Property(g => g.Icon).HasMaxLength(256);
@@ -166,7 +202,6 @@ namespace MainBoilerPlate.Contexts
             builder.Entity<Booking>(b =>
             {
                 b.HasKey(a => a.Id);
-                b.Property(a => a.Id).IsRequired().HasMaxLength(64);
                 b.Property(b => b.Title).IsRequired().HasMaxLength(128);
                 b.Property(b => b.Description).IsRequired().HasColumnType("text").HasMaxLength(512);
                 b.Property(a => a.UpdatedAt).HasColumnType("timestamp with time zone");
@@ -181,7 +216,6 @@ namespace MainBoilerPlate.Contexts
             builder.Entity<Order>(o =>
             {
                 o.HasKey(a => a.Id);
-                o.Property(a => a.Id).IsRequired().HasMaxLength(64);
                 o.Property(a => a.TotalAmount)
                     .IsRequired()
                     .HasColumnType("decimal(18,2)")
@@ -204,7 +238,8 @@ namespace MainBoilerPlate.Contexts
             });
 
             //relationships
-            builder.Entity<UserApp>().HasMany(u => u.Adresses).WithOne(a => a.User);
+            builder.Entity<UserApp>().HasMany(u => u.Adresses).WithOne(a => a.User).HasForeignKey(A => A.UserId);
+            builder.Entity<UserApp>().HasMany(u => u.Formations).WithOne(a => a.User).HasForeignKey(A => A.UserId);
 
             builder
                 .Entity<UserApp>()
@@ -217,6 +252,12 @@ namespace MainBoilerPlate.Contexts
                 .HasOne(u => u.Status)
                 .WithMany()
                 .HasForeignKey(u => u.StatusId);
+
+            builder
+                .Entity<UserApp>()
+                .HasMany(u => u.TeacherCursuses)
+                .WithOne(c => c.Teacher)
+                .HasForeignKey(c => c.TeacherId);
 
             // User => RefreshToken
             builder
@@ -259,6 +300,9 @@ namespace MainBoilerPlate.Contexts
                 .HasOne(b => b.Student)
                 .WithMany(u => u.OrdersForStudent)
                 .HasForeignKey(b => b.StudentId);
+
+            // Cursus => Level
+            builder.Entity<Cursus>().HasOne(c => c.Level).WithMany().HasForeignKey(c => c.LevelId);
 
             // Seed Roles
             List<RoleApp> roles = new()
@@ -354,7 +398,6 @@ namespace MainBoilerPlate.Contexts
             };
 
             builder.Entity<StatusAccount>().HasData(statuses);
-
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)

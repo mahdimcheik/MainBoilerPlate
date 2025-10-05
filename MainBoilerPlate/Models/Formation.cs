@@ -15,5 +15,7 @@ namespace MainBoilerPlate.Models
         [Required]
         required public DateTimeOffset DateFrom { get; set; }
         public DateTimeOffset? DateTo { get; set; }
+        public Guid UserId { get; set; }
+        public UserApp? User { get; set; }
     }
 }

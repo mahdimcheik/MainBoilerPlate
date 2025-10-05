@@ -49,15 +49,25 @@ namespace MainBoilerPlate.Services
         /// <returns>Réponse contenant les informations de l'utilisateur créé</returns>
         public async Task<ResponseDTO<UserResponseDTO>> Register(UserCreateDTO newUserDTO)
         {
-            bool isEmailAlreadyUsed = await IsEmailAlreadyUsedAsync(newUserDTO.Email);
 
+            // Vérifier le consentement
+            if (!newUserDTO.DataProcessingConsent || !newUserDTO.PrivacyPolicyConsent )
+            {
+                return new ResponseDTO<UserResponseDTO>
+                {
+                    Status = 400,
+                    Message = "\"Le consentement est obligatoire pour acceder aux fonctionnalités de cette application\"",
+                };
+            }
+
+            bool isEmailAlreadyUsed = await IsEmailAlreadyUsedAsync(newUserDTO.Email);
             // Vérifier si l'adresse e-mail est déjà utilisée
             if (isEmailAlreadyUsed)
             {
                 // Si l'adresse e-mail est déjà utilisée, mettre à jour la réponse et sauter vers l'étiquette UserAlreadyExisted
                 return new ResponseDTO<UserResponseDTO>
                 {
-                    Status = 40,
+                    Status = 400,
                     Message = "\"L'email est déjà utilisé\"",
                 };
             }

@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using MainBoilerPlate.Models.Generics;
+using MainBoilerPlate.Utilities;
 using Microsoft.AspNetCore.Identity;
 
 namespace MainBoilerPlate.Models
@@ -10,45 +11,53 @@ namespace MainBoilerPlate.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTimeOffset DateOfBirth { get; set; }
+        public bool DataProcessingConsent { get; set; } = false;
+        public bool PrivacyPolicyConsent { get; set; } = false;
+        public string? Title { get; set; }
+        public string? Description { get; set; }
         public DateTimeOffset? ArchivedAt { get; set; }
         public DateTimeOffset? UpdatedAt { get; set; } = DateTime.UtcNow;
         public DateTimeOffset CreatedAt { get; set; } = DateTime.UtcNow;
 
         //gender
-        public Guid? GenderId { get; set; }
-
-        [ForeignKey(nameof(GenderId))]
+        public Guid GenderId { get; set; }
         public Gender? Gender { get; set; }
 
         // Status account
         public Guid StatusId { get; set; }
 
-        [ForeignKey(nameof(StatusId))]
-        public StatusAccount Status { get; set; }
+        public StatusAccount? Status { get; set; }
 
         // address
-        public ICollection<Address>? Adresses { get; set; }
-        public ICollection<Booking>? BookingsForStudent { get; set; }
+        public ICollection<Address> Adresses { get; set; }
+        public ICollection<Formation> Formations { get; set; }
+
+        // Bookings
+        public ICollection<Booking> BookingsForStudent { get; set; }
 
         // Orders
-        public ICollection<Order>? OrdersForStudent { get; set; }
+        public ICollection<Order> OrdersForStudent { get; set; }
+
+        // cursus
+        public ICollection<Cursus> TeacherCursuses { get; set; }
     }
 
     public class UserResponseDTO
     {
         [Required]
         public Guid Id { get; set; }
-
         [Required]
         public string FirstName { get; set; }
-
         [Required]
         public string LastName { get; set; }
-
         [Required]
         public string Email { get; set; } = null!;
+        public string? Title { get; set; }
+        public string? Description { get; set; }
+        public string? PhoneNumber { get; set; }
 
         public StatusAccountDTO? Status { get; set; }
+        public GenderDTO? Gender { get; set; }
 
         [Required]
         public ICollection<string> Roles { get; set; }
@@ -61,6 +70,10 @@ namespace MainBoilerPlate.Models
             Email = user.Email;
             Roles = roles;
             Status = user.Status is null ? null : new StatusAccountDTO(user.Status);
+            Gender = user.Gender is null ? null : new GenderDTO(user.Gender);
+            Title = user.Title;
+            Description = user.Description;
+            PhoneNumber = user.PhoneNumber;
         }
     }
 
@@ -107,9 +120,21 @@ namespace MainBoilerPlate.Models
 
         [Required]
         public string LastName { get; set; }
+        [Required]
+        public bool DataProcessingConsent { get; set; } = false;
+        [Required]
+        public bool PrivacyPolicyConsent { get; set; } = false;
+        public string? Title { get; set; }
+        public string? Description { get; set; }
+        public string? PhoneNumber { get; set; }
 
         public DateTimeOffset DateOfBirth { get; set; }
         public Guid? RoleId { get; set; }
+        public Guid GenderId { get; set; } = HardCode.GENDER_OTHER;
+
+        // collections
+        public List<Address> Addresses { get; set; }
+        public List<Formation> Formations { get; set; }
 
         public UserApp ToUser()
         {
@@ -120,6 +145,14 @@ namespace MainBoilerPlate.Models
                 FirstName = FirstName,
                 LastName = LastName,
                 DateOfBirth = DateOfBirth,
+                Title = Title,
+                GenderId = GenderId,
+                StatusId = HardCode.STATUS_PENDING,
+                Description = Description,
+                PhoneNumber = PhoneNumber,
+
+                DataProcessingConsent = DataProcessingConsent,
+                PrivacyPolicyConsent = PrivacyPolicyConsent
             };
         }
     }
