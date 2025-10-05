@@ -17,6 +17,9 @@ namespace MainBoilerPlate.Contexts
         public DbSet<Slot> Slots { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Booking> Bookings { get; set; }
+        public DbSet<Formation> Formations { get; set; }
+        public DbSet<Experience> Experiences { get; set; }
+        public DbSet<Language> Languages { get; set; }
 
         // cursus
         public DbSet<LevelCursus> LevelCursuses { get; set; }
@@ -253,6 +256,40 @@ namespace MainBoilerPlate.Contexts
                     .ValueGeneratedOnAdd()
                     .HasDefaultValueSql("CURRENT_TIMESTAMP");
                 o.Property(e => e.ArchivedAt).HasColumnType("timestamp with time zone");
+            });
+
+            builder.Entity<Formation>(f =>
+            {
+                f.HasKey(f => f.Id);
+                f.Property(f => f.Title).IsRequired().HasMaxLength(200);
+                f.Property(f => f.Description).IsRequired().HasMaxLength(1000);
+                f.Property(f => f.Institution).IsRequired().HasMaxLength(200);
+                f.Property(f => f.DateFrom).IsRequired().HasColumnType("timestamp with time zone");
+                f.Property(f => f.DateTo).HasColumnType("timestamp with time zone");
+                f.Property(f => f.CreatedAt)
+                    .IsRequired()
+                    .HasColumnType("timestamp with time zone")
+                    .ValueGeneratedOnAdd()
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                f.Property(f => f.UpdatedAt).HasColumnType("timestamp with time zone");
+                f.Property(f => f.ArchivedAt).HasColumnType("timestamp with time zone");
+            });
+
+            builder.Entity<Experience>(e =>
+            {
+                e.HasKey(e => e.Id);
+                e.Property(e => e.Title).IsRequired().HasMaxLength(200);
+                e.Property(e => e.Description).IsRequired().HasMaxLength(1000);
+                e.Property(e => e.Institution).IsRequired().HasMaxLength(200);
+                e.Property(e => e.DateFrom).IsRequired().HasColumnType("timestamp with time zone");
+                e.Property(e => e.DateTo).HasColumnType("timestamp with time zone");
+                e.Property(e => e.CreatedAt)
+                    .IsRequired()
+                    .HasColumnType("timestamp with time zone")
+                    .ValueGeneratedOnAdd()
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                e.Property(e => e.UpdatedAt).HasColumnType("timestamp with time zone");
+                e.Property(e => e.ArchivedAt).HasColumnType("timestamp with time zone");
             });
 
             //relationships
