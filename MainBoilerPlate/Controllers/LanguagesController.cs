@@ -1,5 +1,7 @@
+using MainBoilerPlate.Contexts;
 using MainBoilerPlate.Models;
 using MainBoilerPlate.Services;
+using MainBoilerPlate.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +16,7 @@ namespace MainBoilerPlate.Controllers
     [Route("[controller]")]
     [ApiController]
     [EnableCors]
-    public class LanguagesController(LanguagesService languagesService) : ControllerBase
+    public class LanguagesController(LanguagesService languagesService, MainContext context) : ControllerBase
     {
         /// <summary>
         /// Récupère toutes les langues
@@ -193,6 +195,39 @@ namespace MainBoilerPlate.Controllers
 
             var response = await languagesService.AddLanguageToUserAsync(userLanguageDto);
             
+            return StatusCode(response.Status, response);
+        }
+
+        /// <summary>
+        /// Associe une langue à un utilisateur
+        /// </summary>
+        /// <param name="userLanguageDto">Données d'association utilisateur-langue</param>
+        /// <returns>Résultat de l'opération d'association</returns>
+        /// <response code="200">Langue associée à l'utilisateur avec succès</response>
+        /// <response code="400">Association déjà existante ou données invalides</response>
+        /// <response code="404">Utilisateur ou langue non trouvé</response>
+        /// <response code="500">Erreur interne du serveur</response>
+        [HttpPost("user/update-languages")]
+        [ProducesResponseType(typeof(ResponseDTO<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseDTO<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResponseDTO<object>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ResponseDTO<object>), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ResponseDTO<List<LanguageResponseDTO>>>> UpdateLanguagesForUser(
+            [FromBody] Guid[] languagesIds)
+        {
+            var user = CheckUser.GetUserFromClaim(User, context);
+            if (!ModelState.IsValid || user is null)
+            {
+                return BadRequest(new ResponseDTO<object>
+                {
+                    Status = 400,
+                    Message = "Données de validation invalides",
+                    Data = ModelState
+                });
+            }
+
+            var response = await languagesService.UpdateLanguagesForUser(user, languagesIds);
+
             return StatusCode(response.Status, response);
         }
 

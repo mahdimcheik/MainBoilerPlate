@@ -19,7 +19,6 @@ namespace MainBoilerPlate.Services
             {
                 var programmingLanguages = await context.ProgrammingLanguages
                     .AsNoTracking()
-                    .Where(pl => pl.ArchivedAt == null)
                     .OrderBy(pl => pl.Name)
                     .Select(pl => new ProgrammingLanguageResponseDTO(pl))
                     .ToListAsync();
@@ -54,7 +53,7 @@ namespace MainBoilerPlate.Services
             {
                 var programmingLanguage = await context.ProgrammingLanguages
                     .AsNoTracking()
-                    .FirstOrDefaultAsync(pl => pl.Id == id && pl.ArchivedAt == null);
+                    .FirstOrDefaultAsync(pl => pl.Id == id);
 
                 if (programmingLanguage == null)
                 {
@@ -97,7 +96,6 @@ namespace MainBoilerPlate.Services
                     .AsNoTracking()
                     .Where(u => u.Id == userId)
                     .SelectMany(u => u.ProgrammingLanguages)
-                    .Where(pl => pl.ArchivedAt == null)
                     .OrderBy(pl => pl.Name)
                     .Select(pl => new ProgrammingLanguageResponseDTO(pl))
                     .ToListAsync();

@@ -4,6 +4,6 @@ namespace MainBoilerPlate.Models
 {
     public class Language : BaseModelOption
     {
-        public ICollection<UserApp> Users { get; set; }
+        public ICollection<UserApp>? Users { get; set; }
     }
 }

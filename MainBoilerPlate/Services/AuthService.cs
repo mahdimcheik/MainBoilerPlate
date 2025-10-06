@@ -49,14 +49,14 @@ namespace MainBoilerPlate.Services
         /// <returns>Réponse contenant les informations de l'utilisateur créé</returns>
         public async Task<ResponseDTO<UserResponseDTO>> Register(UserCreateDTO newUserDTO)
         {
-
             // Vérifier le consentement
-            if (!newUserDTO.DataProcessingConsent || !newUserDTO.PrivacyPolicyConsent )
+            if (!newUserDTO.DataProcessingConsent || !newUserDTO.PrivacyPolicyConsent)
             {
                 return new ResponseDTO<UserResponseDTO>
                 {
                     Status = 400,
-                    Message = "\"Le consentement est obligatoire pour acceder aux fonctionnalités de cette application\"",
+                    Message =
+                        "\"Le consentement est obligatoire pour acceder aux fonctionnalités de cette application\"",
                 };
             }
 
@@ -135,15 +135,12 @@ namespace MainBoilerPlate.Services
             }
         }
 
-
         public async Task<ResponseDTO<bool>> SetStatusConfirmed(Guid UserId)
         {
-            await context.Users.ExecuteUpdateAsync(up => up.SetProperty(u => u.StatusId, HardCode.STATUS_CONFIRMED));
-            return new ResponseDTO<bool>
-            {
-                Message = "Compte confirmé",
-                Status = 201
-            };
+            await context.Users.ExecuteUpdateAsync(up =>
+                up.SetProperty(u => u.StatusId, HardCode.STATUS_CONFIRMED)
+            );
+            return new ResponseDTO<bool> { Message = "Compte confirmé", Status = 201 };
         }
 
         /// <summary>
@@ -207,10 +204,42 @@ namespace MainBoilerPlate.Services
                     Message = "Le compte n'existe pas ou ne correspond pas",
                 };
             }
-            model.UpdateUser(user);
             using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
+                // update basic data
+                model.UpdateUser(user);
+
+                // update languages
+                // remove old
+                //var userWithLanguages = await context
+                //    .Users.Where(u => u.Id == user.Id)
+                //    .Include(l => l.Languages)
+                //    .Include(l => l.ProgrammingLanguages)
+                //    .FirstOrDefaultAsync();
+                //if (user != null && user.Languages != null)
+                //{
+                //    context.Languages.RemoveRange(userWithLanguages.Languages);
+                //}
+                //if (user != null && user.ProgrammingLanguages != null)
+                //{
+                //    context.ProgrammingLanguages.RemoveRange(
+                //        userWithLanguages.ProgrammingLanguages
+                //    );
+                //}
+                //await context.SaveChangesAsync();
+
+                // add new
+                var newLanguages = await context
+                    .Languages.Where(l => model.LanguagesIds.Contains(l.Id))
+                    .ToListAsync();
+                var newProgrammingLanguages = await context
+                    .ProgrammingLanguages.Where(l => model.ProgrammingLanguagesIds.Contains(l.Id))
+                    .ToListAsync();
+
+                user.Languages = newLanguages;
+                user.ProgrammingLanguages = newProgrammingLanguages;
+
                 await context.SaveChangesAsync();
                 await transaction.CommitAsync();
             }

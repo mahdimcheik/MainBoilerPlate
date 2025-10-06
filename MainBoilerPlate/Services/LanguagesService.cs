@@ -19,7 +19,6 @@ namespace MainBoilerPlate.Services
             {
                 var languages = await context.Languages
                     .AsNoTracking()
-                    .Where(l => l.ArchivedAt == null)
                     .OrderBy(l => l.Name)
                     .Select(l => new LanguageResponseDTO(l))
                     .ToListAsync();
@@ -97,7 +96,6 @@ namespace MainBoilerPlate.Services
                     .AsNoTracking()
                     .Where(u => u.Id == userId)
                     .SelectMany(u => u.Languages)
-                    .Where(l => l.ArchivedAt == null)
                     .OrderBy(l => l.Name)
                     .Select(l => new LanguageResponseDTO(l))
                     .ToListAsync();
@@ -343,6 +341,40 @@ namespace MainBoilerPlate.Services
             catch (Exception ex)
             {
                 return new ResponseDTO<object>
+                {
+                    Status = 500,
+                    Message = $"Erreur lors de l'association de la langue à l'utilisateur: {ex.Message}",
+                    Data = null
+                };
+            }
+        }
+
+        /// <summary>
+        /// Associe une langue à un utilisateur
+        /// </summary>
+        /// <param name="userLanguageDto">Données d'association utilisateur-langue</param>
+        /// <returns>Résultat de l'opération</returns>
+        public async Task<ResponseDTO<List<LanguageResponseDTO>>> UpdateLanguagesForUser(UserApp user, Guid[] languagesIds)
+        {
+            try
+            {
+                var newLanguages = await context.Languages
+                    .Where(l => languagesIds.Contains(l.Id))
+                    .ToListAsync();
+
+                user.Languages = newLanguages;
+                await context.SaveChangesAsync();
+
+                return new ResponseDTO<List<LanguageResponseDTO>>
+                {
+                    Data = newLanguages.Select(l => new LanguageResponseDTO(l)).ToList(),
+                    Message = "Ok",
+                    Status = 200
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO<List<LanguageResponseDTO>>
                 {
                     Status = 500,
                     Message = $"Erreur lors de l'association de la langue à l'utilisateur: {ex.Message}",

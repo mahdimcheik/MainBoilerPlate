@@ -55,6 +55,7 @@ namespace MainBoilerPlate.Models
         public string LastName { get; set; }
         [Required]
         public string Email { get; set; } = null!;
+        public DateTimeOffset DateOfBirth { get; set; }
         public string? Title { get; set; }
         public string? Description { get; set; }
         public string? PhoneNumber { get; set; }
@@ -77,6 +78,7 @@ namespace MainBoilerPlate.Models
             Title = user.Title;
             Description = user.Description;
             PhoneNumber = user.PhoneNumber;
+            DateOfBirth = user.DateOfBirth;
         }
     }
 
@@ -123,6 +125,7 @@ namespace MainBoilerPlate.Models
 
         [Required]
         public string LastName { get; set; }
+
         [Required]
         public bool DataProcessingConsent { get; set; } = false;
         [Required]
@@ -226,12 +229,21 @@ namespace MainBoilerPlate.Models
         public required string LastName { get; set; }
         [Required]
         public required DateTimeOffset DateOfBirth { get; set; }
+        public string? Title { get; set; }
+        public string? Description { get; set; }
+        public string? PhoneNumber { get; set; }
+
+        public List<Guid> LanguagesIds { get; set; } = new();
+        public List<Guid> ProgrammingLanguagesIds { get; set; } = new();
 
         public void UpdateUser(UserApp user)
         {
             user.FirstName = FirstName;
             user.LastName = LastName;
             user.DateOfBirth = DateOfBirth;
+            user.Title = Title;
+            user.Description = Description;
+            user.PhoneNumber = PhoneNumber;
         }
     }
 

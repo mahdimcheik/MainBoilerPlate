@@ -21,7 +21,7 @@ namespace MainBoilerPlate.Models.Generics
         public required Guid Id { get; set; }
         [Required]
         public required DateTimeOffset CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTimeOffset? UpdatedAt { get; set; } = DateTime.UtcNow;
-        public DateTimeOffset? ArchivedAt { get; set; } = DateTime.UtcNow;
+        public DateTimeOffset? UpdatedAt { get; set; }
+        public DateTimeOffset? ArchivedAt { get; set; }
     }
 }
