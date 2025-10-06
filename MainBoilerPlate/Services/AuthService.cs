@@ -204,58 +204,75 @@ namespace MainBoilerPlate.Services
                     Message = "Le compte n'existe pas ou ne correspond pas",
                 };
             }
+            
             using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
-                // update basic data
-                model.UpdateUser(user);
+                // Load user with existing relationships
+                var userWithLanguages = await context
+                    .Users.Where(u => u.Id == user.Id)
+                    .Include(u => u.Languages)
+                    .Include(u => u.ProgrammingLanguages)
+                    .FirstOrDefaultAsync();
 
-                // update languages
-                // remove old
-                //var userWithLanguages = await context
-                //    .Users.Where(u => u.Id == user.Id)
-                //    .Include(l => l.Languages)
-                //    .Include(l => l.ProgrammingLanguages)
-                //    .FirstOrDefaultAsync();
-                //if (user != null && user.Languages != null)
-                //{
-                //    context.Languages.RemoveRange(userWithLanguages.Languages);
-                //}
-                //if (user != null && user.ProgrammingLanguages != null)
-                //{
-                //    context.ProgrammingLanguages.RemoveRange(
-                //        userWithLanguages.ProgrammingLanguages
-                //    );
-                //}
-                //await context.SaveChangesAsync();
+                if (userWithLanguages == null)
+                {
+                    return new ResponseDTO<UserResponseDTO>
+                    {
+                        Status = 404,
+                        Message = "Utilisateur non trouvé",
+                    };
+                }
 
-                // add new
-                var newLanguages = await context
-                    .Languages.Where(l => model.LanguagesIds.Contains(l.Id))
-                    .ToListAsync();
-                var newProgrammingLanguages = await context
-                    .ProgrammingLanguages.Where(l => model.ProgrammingLanguagesIds.Contains(l.Id))
-                    .ToListAsync();
+                // Update basic data
+                model.UpdateUser(userWithLanguages);
 
-                user.Languages = newLanguages;
-                user.ProgrammingLanguages = newProgrammingLanguages;
+                // Clear existing language relationships
+                userWithLanguages.Languages.Clear();
+                userWithLanguages.ProgrammingLanguages.Clear();
+
+                // Add new languages
+                if (model.LanguagesIds?.Any() == true)
+                {
+                    var newLanguages = await context
+                        .Languages.Where(l => model.LanguagesIds.Contains(l.Id))
+                        .ToListAsync();
+                    
+                    foreach (var language in newLanguages)
+                    {
+                        userWithLanguages.Languages.Add(language);
+                    }
+                }
+
+                // Add new programming languages
+                if (model.ProgrammingLanguagesIds?.Any() == true)
+                {
+                    var newProgrammingLanguages = await context
+                        .ProgrammingLanguages.Where(l => model.ProgrammingLanguagesIds.Contains(l.Id))
+                        .ToListAsync();
+                    
+                    foreach (var programmingLanguage in newProgrammingLanguages)
+                    {
+                        userWithLanguages.ProgrammingLanguages.Add(programmingLanguage);
+                    }
+                }
 
                 await context.SaveChangesAsync();
                 await transaction.CommitAsync();
+
+                var userRoles = await userManager.GetRolesAsync(userWithLanguages);
+                return new ResponseDTO<UserResponseDTO>
+                {
+                    Message = "Profil mis à jour",
+                    Status = 200,
+                    Data = new UserResponseDTO(userWithLanguages, userRoles.ToList()),
+                };
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                return new ResponseDTO<UserResponseDTO> { Status = 40, Message = ex.Message };
+                return new ResponseDTO<UserResponseDTO> { Status = 500, Message = ex.Message };
             }
-
-            var userRoles = await userManager.GetRolesAsync(user);
-            return new ResponseDTO<UserResponseDTO>
-            {
-                Message = "Profil mis à jour",
-                Status = 200,
-                Data = new UserResponseDTO(user, userRoles.ToList()),
-            };
         }
 
         /// <summary>

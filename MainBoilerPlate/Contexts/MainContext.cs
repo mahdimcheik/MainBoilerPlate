@@ -369,12 +369,12 @@ namespace MainBoilerPlate.Contexts
                     j =>
                         j.HasOne<Language>()
                             .WithMany()
-                            .HasForeignKey("UserId")
+                            .HasForeignKey("LanguageId")
                             .OnDelete(DeleteBehavior.Restrict),
                     j =>
                         j.HasOne<UserApp>()
                             .WithMany()
-                            .HasForeignKey("LanguageId")
+                            .HasForeignKey("UserId")
                             .OnDelete(DeleteBehavior.Restrict)
                 );
 
@@ -387,12 +387,12 @@ namespace MainBoilerPlate.Contexts
                     j =>
                         j.HasOne<ProgrammingLanguage>()
                             .WithMany()
-                            .HasForeignKey("UserId")
+                            .HasForeignKey("ProgrammingLanguageId")
                             .OnDelete(DeleteBehavior.Restrict),
                     j =>
                         j.HasOne<UserApp>()
                             .WithMany()
-                            .HasForeignKey("ProgrammingLanguageId")
+                            .HasForeignKey("UserId")
                             .OnDelete(DeleteBehavior.Restrict)
                 );
 
