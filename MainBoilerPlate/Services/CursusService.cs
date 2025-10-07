@@ -199,19 +199,19 @@ namespace MainBoilerPlate.Services
                     };
                 }
 
-                // Vérifier que le nom n'existe pas déjà
-                var existingCursus = await context.Cursuses
-                    .AnyAsync(c => c.Name.ToLower() == cursusDto.Name.ToLower() && c.ArchivedAt == null);
+                //// Vérifier que le nom n'existe pas déjà
+                //var existingCursus = await context.Cursuses
+                //    .AnyAsync(c => c.Name.ToLower() == cursusDto.Name.ToLower() && c.ArchivedAt == null);
 
-                if (existingCursus)
-                {
-                    return new ResponseDTO<CursusResponseDTO>
-                    {
-                        Status = 400,
-                        Message = "Un cursus avec ce nom existe déjà",
-                        Data = null
-                    };
-                }
+                //if (existingCursus)
+                //{
+                //    return new ResponseDTO<CursusResponseDTO>
+                //    {
+                //        Status = 400,
+                //        Message = "Un cursus avec ce nom existe déjà",
+                //        Data = null
+                //    };
+                //}
 
                 // Vérifier que les catégories existent
                 var categories = new List<CategoryCursus>();
