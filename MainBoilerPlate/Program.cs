@@ -49,6 +49,7 @@ static void ConfigureServices(IServiceCollection services)
     services.AddTransient<CategoryCursusService>();
     services.AddTransient<LevelCursusService>();
     services.AddTransient<SlotsService>();
+    services.AddTransient<TypeSlotService>();
 
     services.AddLogging(loggingBuilder =>
     {
