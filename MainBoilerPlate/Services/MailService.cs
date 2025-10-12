@@ -58,7 +58,7 @@ namespace MainBoilerPlate.Services
                     EnvironmentVariables.API_FRONT_URL
                 );
 
-                string template = await _razorLightEngine.CompileRenderAsync("ConfirmAccountTemplate.cshtml", model);     
+                string template =  await _razorLightEngine.CompileRenderAsync("ConfirmAccountTemplate.cshtml", model);     
 
                 MailApp mailApp = new MailApp
                 {

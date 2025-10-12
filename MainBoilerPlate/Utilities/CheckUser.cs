@@ -45,5 +45,6 @@ namespace MainBoilerPlate.Utilities
 
             return (user, user is null);
         }
+
     }
 }
