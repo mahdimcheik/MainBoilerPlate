@@ -1,8 +1,11 @@
+using MainBoilerPlate.Contexts;
 using MainBoilerPlate.Models;
 using MainBoilerPlate.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace MainBoilerPlate.Controllers
 {
@@ -14,7 +17,7 @@ namespace MainBoilerPlate.Controllers
     [Route("[controller]")]
     [ApiController]
     [EnableCors]
-    public class AddressesController(AddressesService addressesService) : ControllerBase
+    public class AddressesController(MainContext context, AddressesService addressesService) : ControllerBase
     {
         /// <summary>
         /// Récupère toutes les adresses
@@ -25,8 +28,11 @@ namespace MainBoilerPlate.Controllers
         [HttpGet("all")]
         [ProducesResponseType(typeof(ResponseDTO<List<AddressResponseDTO>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseDTO<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ResponseDTO<List<AddressResponseDTO>>>> GetAllAddresses()
+        public async Task<ActionResult<ResponseDTO<List<AddressResponseDTO>>>> GetAllAddresses(ODataQueryOptions<Address> options)
         {
+            var query = context.Addresses.AsQueryable();
+            var res  = (IQueryable<Address>)options.ApplyTo(query);
+            res.ToList();
             var response = await addressesService.GetAllAddressesAsync();
             
             if (response.Status == 200)

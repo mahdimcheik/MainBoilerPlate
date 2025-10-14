@@ -5,6 +5,7 @@ using MainBoilerPlate.Services;
 using MainBoilerPlate.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -109,7 +110,7 @@ static void ConfigureCors(IServiceCollection services)
 
 static void ConfigureControllers(IServiceCollection services)
 {
-    services.AddControllers();
+    services.AddControllers().AddOData(o => o.Count().Filter().OrderBy().SetMaxTop(1000));
     services.AddEndpointsApiExplorer();
 }
 
@@ -176,6 +177,7 @@ static void ConfigureSwagger(IServiceCollection services)
 {
     services.AddSwaggerGen(c =>
     {
+        c.OperationFilter<ODataQueryOperationFilter>();
         c.SwaggerDoc(
             "v1",
             new OpenApiInfo
