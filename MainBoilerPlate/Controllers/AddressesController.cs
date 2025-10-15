@@ -28,11 +28,11 @@ namespace MainBoilerPlate.Controllers
         [HttpGet("all")]
         [ProducesResponseType(typeof(ResponseDTO<List<AddressResponseDTO>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseDTO<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ResponseDTO<List<AddressResponseDTO>>>> GetAllAddresses(ODataQueryOptions<Address> options)
+        public async Task<ActionResult<ResponseDTO<List<AddressResponseDTO>>>> GetAllAddresses()
         {
-            var query = context.Addresses.AsQueryable();
-            var res  = (IQueryable<Address>)options.ApplyTo(query);
-            res.ToList();
+            //var query = context.Addresses.AsQueryable();
+            //var res  = (IQueryable<Address>)options.ApplyTo(query);
+            //res.ToList();
             var response = await addressesService.GetAllAddressesAsync();
             
             if (response.Status == 200)

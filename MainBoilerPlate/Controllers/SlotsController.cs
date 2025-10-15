@@ -1,3 +1,4 @@
+using MainBoilerPlate.Contexts;
 using MainBoilerPlate.Models;
 using MainBoilerPlate.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -15,7 +16,7 @@ namespace MainBoilerPlate.Controllers
     [Route("[controller]")]
     [ApiController]
     [EnableCors]
-    public class SlotsController(SlotsService slotsService) : ControllerBase
+    public class SlotsController(SlotsService slotsService, MainContext context) : ControllerBase
     {
         /// <summary>
         /// Récupère tous les créneaux
@@ -68,10 +69,9 @@ namespace MainBoilerPlate.Controllers
         [HttpGet("teacher/{teacherId:guid}")]
         [ProducesResponseType(typeof(ResponseDTO<List<SlotResponseDTO>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseDTO<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ResponseDTO<List<SlotResponseDTO>>>> GetSlotsByTeacherId(ODataQueryOptions<Slot> options,
+        public async Task<ActionResult<ResponseDTO<List<SlotResponseDTO>>>> GetSlotsByTeacherId(
             [FromRoute] Guid teacherId)
         {
-            var toto = options.Filter;
             var response = await slotsService.GetSlotsByTeacherIdAsync(teacherId);
             
             if (response.Status == 200)

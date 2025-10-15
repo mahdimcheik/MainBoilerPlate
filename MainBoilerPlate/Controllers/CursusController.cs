@@ -1,8 +1,10 @@
+using MainBoilerPlate.Contexts;
 using MainBoilerPlate.Models;
 using MainBoilerPlate.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace MainBoilerPlate.Controllers
 {
@@ -14,7 +16,7 @@ namespace MainBoilerPlate.Controllers
     [Route("[controller]")]
     [ApiController]
     [EnableCors]
-    public class CursusController(CursusService cursusService) : ControllerBase
+    public class CursusController(CursusService cursusService, MainContext context) : ControllerBase
     {
         /// <summary>
         /// Récupère tous les cursus
@@ -34,6 +36,29 @@ namespace MainBoilerPlate.Controllers
                 return Ok(response);
             }
             
+            return StatusCode(response.Status, response);
+        }
+
+        [HttpPost("all")]
+        [ProducesResponseType(typeof(ResponseDTO<List<CursusResponseDTO>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseDTO<object>), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ResponseDTO<List<CursusResponseDTO>>>> GetAllCursusPaginated([FromBody] DynamicFilters<Cursus> tableState)
+        {
+            var slots = context.Cursuses.AsQueryable();
+            slots = slots.ApplySorts(tableState);
+            slots = slots.ApplyDynamicWhere(tableState);
+
+            var query = slots.ToQueryString();
+
+            var toto = slots.ToList();
+
+            var response = await cursusService.GetAllCursusAsync();
+
+            if (response.Status == 200)
+            {
+                return Ok(response);
+            }
+
             return StatusCode(response.Status, response);
         }
 
