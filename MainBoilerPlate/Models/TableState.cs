@@ -1,5 +1,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Text.Json;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 namespace MainBoilerPlate.Models
@@ -173,79 +175,119 @@ namespace MainBoilerPlate.Models
                 // Gestion spéciale pour le matchMode "any"
                 if (filter.MatchMode.ToLower() == "any")
                 {
-                    // Parser la valeur qui doit être une liste séparée par des virgules
-                    // Exemple: "guid1,guid2,guid3" ou "1,2,3"
-                    var values = System.Text.Json.JsonSerializer.Deserialize<Guid[]>(filter.Value.ToString());
-                        //.Split(
-                        //    ',',
-                        //    StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
-                        //);
-
-                    if (values.Length > 0)
+                    try
                     {
-                        // Convertir les valeurs au type de la propriété
-                        var convertedValues = values
-                            .Select(v => Convert.ChangeType(v, property.PropertyType))
-                            .ToList();
+                        // Parser la valeur qui doit être un tableau JSON
+                        Guid[] values;
 
-                        // Créer un tableau du type approprié
-                        var arrayType = property.PropertyType.MakeArrayType();
-                        var typedArray = Array.CreateInstance(property.PropertyType, convertedValues.Count);
-                        for (int i = 0; i < convertedValues.Count; i++)
+                        if (filter.Value is JsonElement jsonElement)
                         {
-                            typedArray.SetValue(convertedValues[i], i);
+                            values = jsonElement.Deserialize<Guid[]>() ?? Array.Empty<Guid>();
+                        }
+                        else if (filter.Value is string strValue)
+                        {
+                            values = JsonSerializer.Deserialize<Guid[]>(strValue) ?? Array.Empty<Guid>();
+                        }
+                        else
+                        {
+                            // Si c'est déjà un tableau
+                            values = (Guid[])filter.Value;
                         }
 
-                        // Créer l'expression: array.Contains(x.Property)
-                        var containsMethod = typeof(Enumerable)
-                            .GetMethods()
-                            .First(m => m.Name == "Contains" && m.GetParameters().Length == 2)
-                            .MakeGenericMethod(property.PropertyType);
+                        if (values.Length > 0)
+                        {
+                            // Convertir les valeurs au type de la propriété
+                            var convertedValues = values
+                                .Select(v => Convert.ChangeType(v, property.PropertyType))
+                                .ToList();
 
-                        var arrayConstant = Expression.Constant(typedArray);
-                        expression = Expression.Call(null, containsMethod, arrayConstant, member);
+                            // Créer un tableau du type approprié
+                            var arrayType = property.PropertyType.MakeArrayType();
+                            var typedArray = Array.CreateInstance(
+                                property.PropertyType,
+                                convertedValues.Count
+                            );
+                            for (int i = 0; i < convertedValues.Count; i++)
+                            {
+                                typedArray.SetValue(convertedValues[i], i);
+                            }
+
+                            // Créer l'expression: array.Contains(x.Property)
+                            var containsMethod = typeof(Enumerable)
+                                .GetMethods()
+                                .First(m => m.Name == "Contains" && m.GetParameters().Length == 2)
+                                .MakeGenericMethod(property.PropertyType);
+
+                            var arrayConstant = Expression.Constant(typedArray);
+                            expression = Expression.Call(null, containsMethod, arrayConstant, member);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error parsing 'any' filter for {key}: {ex.Message}");
                     }
                 }
                 else
                 {
-                    // valeur à comparer
-                    var constant = Expression.Constant(
-                        Convert.ChangeType(filter.Value, property.PropertyType)
-                    );
-
-                    expression = filter.MatchMode.ToLower() switch
+                    try
                     {
-                        "equals" => Expression.Equal(member, constant),
-                        "notequals" => Expression.NotEqual(member, constant),
+                        // Convertir la valeur au type approprié
+                        object convertedValue;
 
-                        "contains" when property.PropertyType == typeof(string) => Expression.Call(
-                            member,
-                            nameof(string.Contains),
-                            Type.EmptyTypes,
-                            constant
-                        ),
+                        if (filter.Value is JsonElement jsonElement)
+                        {
+                            // Extraire la valeur du JsonElement selon le type de la propriété
+                            convertedValue = GetValueFromJsonElement(jsonElement, property.PropertyType);
+                        }
+                        else
+                        {
+                            // Conversion directe si ce n'est pas un JsonElement
+                            convertedValue = Convert.ChangeType(filter.Value, property.PropertyType);
+                        }
 
-                        "startswith" when property.PropertyType == typeof(string) => Expression.Call(
-                            member,
-                            nameof(string.StartsWith),
-                            Type.EmptyTypes,
-                            constant
-                        ),
+                        var constant = Expression.Constant(convertedValue, property.PropertyType);
 
-                        "endswith" when property.PropertyType == typeof(string) => Expression.Call(
-                            member,
-                            nameof(string.EndsWith),
-                            Type.EmptyTypes,
-                            constant
-                        ),
+                        expression = filter.MatchMode.ToLower() switch
+                        {
+                            "equals" => Expression.Equal(member, constant),
+                            "notequals" => Expression.NotEqual(member, constant),
 
-                        "gte" => Expression.GreaterThanOrEqual(member, constant),
-                        "lte" => Expression.LessThanOrEqual(member, constant),
-                        "gt" => Expression.GreaterThan(member, constant),
-                        "lt" => Expression.LessThan(member, constant),
+                            "contains" when property.PropertyType == typeof(string) =>
+                                Expression.Call(
+                                    member,
+                                    nameof(string.Contains),
+                                    Type.EmptyTypes,
+                                    constant
+                                ),
 
-                        _ => null,
-                    };
+                            "startswith" when property.PropertyType == typeof(string) =>
+                                Expression.Call(
+                                    member,
+                                    nameof(string.StartsWith),
+                                    Type.EmptyTypes,
+                                    constant
+                                ),
+
+                            "endswith" when property.PropertyType == typeof(string) =>
+                                Expression.Call(
+                                    member,
+                                    nameof(string.EndsWith),
+                                    Type.EmptyTypes,
+                                    constant
+                                ),
+
+                            "gte" => Expression.GreaterThanOrEqual(member, constant),
+                            "lte" => Expression.LessThanOrEqual(member, constant),
+                            "gt" => Expression.GreaterThan(member, constant),
+                            "lt" => Expression.LessThan(member, constant),
+
+                            _ => null,
+                        };
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error converting filter value for {key}: {ex.Message}");
+                    }
                 }
 
                 if (expression == null)
@@ -263,6 +305,64 @@ namespace MainBoilerPlate.Models
             var lambda = Expression.Lambda<Func<T, bool>>(finalExpression, parameter);
 
             return query.Where(lambda);
+        }
+
+        /// <summary>
+        /// Extrait la valeur d'un JsonElement et la convertit au type approprié
+        /// </summary>
+        private static object GetValueFromJsonElement(JsonElement element, Type targetType)
+        {
+            // Gérer les types nullable
+            var underlyingType = Nullable.GetUnderlyingType(targetType) ?? targetType;
+
+            return underlyingType switch
+            {
+                Type t when t == typeof(string) => element.GetString() ?? string.Empty,
+                Type t when t == typeof(int) => element.GetInt32(),
+                Type t when t == typeof(long) => element.GetInt64(),
+                Type t when t == typeof(short) => element.GetInt16(),
+                Type t when t == typeof(byte) => element.GetByte(),
+                Type t when t == typeof(bool) => element.GetBoolean(),
+                Type t when t == typeof(decimal) => element.GetDecimal(),
+                Type t when t == typeof(double) => element.GetDouble(),
+                Type t when t == typeof(float) => element.GetSingle(),
+                Type t when t == typeof(Guid) => element.GetGuid(),
+                Type t when t == typeof(DateTime) => element.GetDateTime(),
+                Type t when t == typeof(DateTimeOffset) => element.GetDateTimeOffset(),
+                _ => element.Deserialize(targetType) ?? throw new InvalidOperationException($"Cannot convert JsonElement to {targetType.Name}")
+            };
+        }
+
+        public static IQueryable<T> ApplyPagination<T>(
+            this IQueryable<T> query,
+            DynamicFilters<T> dynamicFilters
+        )
+        {
+            // 🔹 Pagination
+            if (dynamicFilters.First >= 0)
+                query = query.Skip(dynamicFilters.First);
+
+            query = query.Take(dynamicFilters.Rows > 0 ? dynamicFilters.Rows : 10);
+            return query;
+        }
+
+        public static async Task<(List<T> Values, long Count)> ApplyAndCountAsync<T>(
+            this IQueryable<T> query,
+            DynamicFilters<T> dynamicFilters
+        )
+        {
+            query = query.ApplyDynamicWhere(dynamicFilters);
+            var toto = query.ToQueryString();
+            query = query.ApplySorts(dynamicFilters);
+            toto = query.ToQueryString();
+
+            var count = await query.CountAsync();
+
+            query = query.ApplyPagination(dynamicFilters);
+            toto = query.ToQueryString();
+
+            var values = await query.ToListAsync();
+            return (values, count);
         }
 
         public static PropertyInfo? GetProperty(string propName, PropertyInfo[] properties)

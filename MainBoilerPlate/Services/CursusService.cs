@@ -46,6 +46,39 @@ namespace MainBoilerPlate.Services
             }
         }
 
+        public async Task<ResponseDTO<List<CursusResponseDTO>>> GetAllCursusPaginatedAsync(DynamicFilters<Cursus> tableState)
+        {
+            try
+            {
+                var cursuses = context.Cursuses
+                    .AsNoTracking()
+                    .Include(c => c.Level)
+                    .Include(c => c.Teacher)
+                    .Include(c => c.Categories)
+                    .Where(c => c.ArchivedAt == null);
+
+                var countValues = await cursuses.ApplyAndCountAsync(tableState);
+
+                return new ResponseDTO<List<CursusResponseDTO>>
+                {
+                    Status = 200,
+                    Message = "Cursus récupérés avec succès",
+                    Data = countValues.Values.Select(x => new CursusResponseDTO(x)).ToList(),
+                    Count = countValues.Count
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO<List<CursusResponseDTO>>
+                {
+                    Status = 500,
+                    Message = $"Erreur lors de la récupération des cursus: {ex.Message}",
+                    Data = null
+                };
+            }
+        }
+
+
         /// <summary>
         /// Récupère un cursus par son identifiant
         /// </summary>
