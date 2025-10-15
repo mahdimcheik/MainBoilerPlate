@@ -249,31 +249,45 @@ namespace MainBoilerPlate.Models
 
                         expression = filter.MatchMode.ToLower() switch
                         {
+                            // Pour les strings, on applique ToLower() pour une comparaison insensible à la casse
+                            "equals" when property.PropertyType == typeof(string) =>
+                                Expression.Equal(
+                                    Expression.Call(member, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!),
+                                    Expression.Call(constant, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!)
+                                ),
+                            
                             "equals" => Expression.Equal(member, constant),
+                            
+                            "notequals" when property.PropertyType == typeof(string) =>
+                                Expression.NotEqual(
+                                    Expression.Call(member, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!),
+                                    Expression.Call(constant, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!)
+                                ),
+                            
                             "notequals" => Expression.NotEqual(member, constant),
 
                             "contains" when property.PropertyType == typeof(string) =>
                                 Expression.Call(
-                                    member,
+                                    Expression.Call(member, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!),
                                     nameof(string.Contains),
                                     Type.EmptyTypes,
-                                    constant
+                                    Expression.Call(constant, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!)
                                 ),
 
                             "startswith" when property.PropertyType == typeof(string) =>
                                 Expression.Call(
-                                    member,
+                                    Expression.Call(member, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!),
                                     nameof(string.StartsWith),
                                     Type.EmptyTypes,
-                                    constant
+                                    Expression.Call(constant, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!)
                                 ),
 
                             "endswith" when property.PropertyType == typeof(string) =>
                                 Expression.Call(
-                                    member,
+                                    Expression.Call(member, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!),
                                     nameof(string.EndsWith),
                                     Type.EmptyTypes,
-                                    constant
+                                    Expression.Call(constant, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!)
                                 ),
 
                             "gte" => Expression.GreaterThanOrEqual(member, constant),
