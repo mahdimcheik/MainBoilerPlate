@@ -40,5 +40,10 @@ namespace MainBoilerPlate.Utilities
         public static Guid LANGUAGE_JAVA => Guid.Parse("4a5eaf2f-0496-4035-a4b7-9210da39501c");
         public static Guid LANGUAGE_CSHARP => Guid.Parse("87a0a5ed-c7bb-4394-a163-7ed7560b3703");
         public static Guid LANGUAGE_CPP => Guid.Parse("41f1f997-c392-4aac-bef0-fc8acaf109ec");
+
+        // type slots
+        public static Guid SLOT_TYPE_VISIO => Guid.Parse("bde5556b-562d-431f-9ff9-d31a5f5cb8c5");
+        public static Guid SLOT_TYPE_PRESENTIAL => Guid.Parse("4a5eaf2f-0496-4035-a4b7-9210da39501c");
+
     }
 }

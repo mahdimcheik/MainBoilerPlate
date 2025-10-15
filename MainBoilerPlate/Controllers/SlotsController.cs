@@ -3,6 +3,7 @@ using MainBoilerPlate.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace MainBoilerPlate.Controllers
 {
@@ -67,9 +68,10 @@ namespace MainBoilerPlate.Controllers
         [HttpGet("teacher/{teacherId:guid}")]
         [ProducesResponseType(typeof(ResponseDTO<List<SlotResponseDTO>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseDTO<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ResponseDTO<List<SlotResponseDTO>>>> GetSlotsByTeacherId(
+        public async Task<ActionResult<ResponseDTO<List<SlotResponseDTO>>>> GetSlotsByTeacherId(ODataQueryOptions<Slot> options,
             [FromRoute] Guid teacherId)
         {
+            var toto = options.Filter;
             var response = await slotsService.GetSlotsByTeacherIdAsync(teacherId);
             
             if (response.Status == 200)

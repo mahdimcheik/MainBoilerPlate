@@ -702,6 +702,30 @@ namespace MainBoilerPlate.Contexts
             };
 
             builder.Entity<ProgrammingLanguage>().HasData(programmingLanguages);
+
+            // seed slot types
+            // seed languages
+            List<TypeSlot> typeSlots = new()
+            {
+                new TypeSlot
+                {
+                    Id = HardCode.SLOT_TYPE_VISIO,
+                    Name = "Visio",
+                    Color = "#ff69b4",
+                    Icon = "",
+                    CreatedAt = DateTime.UtcNow,
+                },
+                new TypeSlot
+                {
+                    Id = HardCode.SLOT_TYPE_PRESENTIAL,
+                    Name = "Présentiel",
+                    Color = "#fa69b4",
+                    Icon = "",
+                    CreatedAt = DateTime.UtcNow,
+                }
+            };
+
+            builder.Entity<TypeSlot>().HasData(typeSlots);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
