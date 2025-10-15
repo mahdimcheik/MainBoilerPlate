@@ -12,6 +12,7 @@
     <Utf8Output>true</Utf8Output>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Bogus" Version="35.6.4" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.OData" Version="8.3.1" />
