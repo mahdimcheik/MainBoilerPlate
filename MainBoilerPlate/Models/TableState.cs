@@ -22,7 +22,7 @@ namespace MainBoilerPlate.Models
 
     public class FilterItem
     {
-        public required string? Value { get; set; }
+        public required object Value { get; set; }
         public required string MatchMode { get; set; }
     }
 
@@ -100,7 +100,7 @@ namespace MainBoilerPlate.Models
                         var thenByDescendingMethod = typeof(Queryable)
                             .GetMethods()
                             .First(m =>
-                                m.Name == "thenByDescending" && m.GetParameters().Length == 2
+                                m.Name == "ThenByDescending" && m.GetParameters().Length == 2
                             )
                             .MakeGenericMethod(typeof(T), newProperty.PropertyType);
 
@@ -168,44 +168,85 @@ namespace MainBoilerPlate.Models
                 // x.PropName
                 var member = Expression.Property(parameter, property);
 
-                // valeur à comparer
-                var constant = Expression.Constant(
-                    Convert.ChangeType(filter.Value, property.PropertyType)
-                );
+                Expression? expression = null;
 
-                Expression? expression = filter.MatchMode.ToLower() switch
+                // Gestion spéciale pour le matchMode "any"
+                if (filter.MatchMode.ToLower() == "any")
                 {
-                    "equals" => Expression.Equal(member, constant),
-                    "notequals" => Expression.NotEqual(member, constant),
+                    // Parser la valeur qui doit être une liste séparée par des virgules
+                    // Exemple: "guid1,guid2,guid3" ou "1,2,3"
+                    var values = System.Text.Json.JsonSerializer.Deserialize<Guid[]>(filter.Value.ToString());
+                        //.Split(
+                        //    ',',
+                        //    StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
+                        //);
 
-                    "contains" when property.PropertyType == typeof(string) => Expression.Call(
-                        member,
-                        nameof(string.Contains),
-                        Type.EmptyTypes,
-                        constant
-                    ),
+                    if (values.Length > 0)
+                    {
+                        // Convertir les valeurs au type de la propriété
+                        var convertedValues = values
+                            .Select(v => Convert.ChangeType(v, property.PropertyType))
+                            .ToList();
 
-                    "startswith" when property.PropertyType == typeof(string) => Expression.Call(
-                        member,
-                        nameof(string.StartsWith),
-                        Type.EmptyTypes,
-                        constant
-                    ),
+                        // Créer un tableau du type approprié
+                        var arrayType = property.PropertyType.MakeArrayType();
+                        var typedArray = Array.CreateInstance(property.PropertyType, convertedValues.Count);
+                        for (int i = 0; i < convertedValues.Count; i++)
+                        {
+                            typedArray.SetValue(convertedValues[i], i);
+                        }
 
-                    "endswith" when property.PropertyType == typeof(string) => Expression.Call(
-                        member,
-                        nameof(string.EndsWith),
-                        Type.EmptyTypes,
-                        constant
-                    ),
+                        // Créer l'expression: array.Contains(x.Property)
+                        var containsMethod = typeof(Enumerable)
+                            .GetMethods()
+                            .First(m => m.Name == "Contains" && m.GetParameters().Length == 2)
+                            .MakeGenericMethod(property.PropertyType);
 
-                    "gte" => Expression.GreaterThanOrEqual(member, constant),
-                    "lte" => Expression.LessThanOrEqual(member, constant),
-                    "gt" => Expression.GreaterThan(member, constant),
-                    "lt" => Expression.LessThan(member, constant),
+                        var arrayConstant = Expression.Constant(typedArray);
+                        expression = Expression.Call(null, containsMethod, arrayConstant, member);
+                    }
+                }
+                else
+                {
+                    // valeur à comparer
+                    var constant = Expression.Constant(
+                        Convert.ChangeType(filter.Value, property.PropertyType)
+                    );
 
-                    _ => null,
-                };
+                    expression = filter.MatchMode.ToLower() switch
+                    {
+                        "equals" => Expression.Equal(member, constant),
+                        "notequals" => Expression.NotEqual(member, constant),
+
+                        "contains" when property.PropertyType == typeof(string) => Expression.Call(
+                            member,
+                            nameof(string.Contains),
+                            Type.EmptyTypes,
+                            constant
+                        ),
+
+                        "startswith" when property.PropertyType == typeof(string) => Expression.Call(
+                            member,
+                            nameof(string.StartsWith),
+                            Type.EmptyTypes,
+                            constant
+                        ),
+
+                        "endswith" when property.PropertyType == typeof(string) => Expression.Call(
+                            member,
+                            nameof(string.EndsWith),
+                            Type.EmptyTypes,
+                            constant
+                        ),
+
+                        "gte" => Expression.GreaterThanOrEqual(member, constant),
+                        "lte" => Expression.LessThanOrEqual(member, constant),
+                        "gt" => Expression.GreaterThan(member, constant),
+                        "lt" => Expression.LessThan(member, constant),
+
+                        _ => null,
+                    };
+                }
 
                 if (expression == null)
                     continue;
