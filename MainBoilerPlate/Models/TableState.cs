@@ -23,6 +23,7 @@ namespace MainBoilerPlate.Models
     {
         public int First { get; set; }
         public int Rows { get; set; }
+        public string? Search { get; set; }
         public string GlobalSearch { get; set; }
         public List<Sort> sorts { get; set; }
         public Dictionary<string, FilterItem> Filters { get; set; } = new();
