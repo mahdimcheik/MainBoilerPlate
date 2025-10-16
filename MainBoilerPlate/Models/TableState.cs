@@ -6,15 +6,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MainBoilerPlate.Models
 {
-    public enum MatchMode
-    {
-        equals,
-        contains,
-        gt,
-        lt,
-        any,
-        range,
-    }
 
     public class Sort
     {
@@ -160,148 +151,31 @@ namespace MainBoilerPlate.Models
 
             foreach (var (key, filter) in dynamicFilters.Filters)
             {
-                var property = entityType.GetProperty(
-                    key,
-                    BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance
-                );
-                if (property == null || filter.Value == null)
+                if (filter.Value == null)
                     continue;
 
-                // x.PropName
-                var member = Expression.Property(parameter, property);
+                // 🔹 Détecter si c'est une propriété imbriquée (contient "/")
+                var propertyPath = key.Split('/');
+                
+                // Obtenir le membre (propriété simple ou imbriquée)
+                var (member, propertyType) = GetNestedPropertyExpression(parameter, propertyPath, entityType);
+                
+                if (member == null || propertyType == null)
+                {
+                    Console.WriteLine($"Property path '{key}' not found on type {entityType.Name}");
+                    continue;
+                }
 
                 Expression? expression = null;
 
                 // Gestion spéciale pour le matchMode "any"
-                if (filter.MatchMode.ToLower() == "any")
+                if (filter.MatchMode.ToLower() == "in")
                 {
-                    try
-                    {
-                        // Parser la valeur qui doit être un tableau JSON
-                        Guid[] values;
-
-                        if (filter.Value is JsonElement jsonElement)
-                        {
-                            values = jsonElement.Deserialize<Guid[]>() ?? Array.Empty<Guid>();
-                        }
-                        else if (filter.Value is string strValue)
-                        {
-                            values = JsonSerializer.Deserialize<Guid[]>(strValue) ?? Array.Empty<Guid>();
-                        }
-                        else
-                        {
-                            // Si c'est déjà un tableau
-                            values = (Guid[])filter.Value;
-                        }
-
-                        if (values.Length > 0)
-                        {
-                            // Convertir les valeurs au type de la propriété
-                            var convertedValues = values
-                                .Select(v => Convert.ChangeType(v, property.PropertyType))
-                                .ToList();
-
-                            // Créer un tableau du type approprié
-                            var arrayType = property.PropertyType.MakeArrayType();
-                            var typedArray = Array.CreateInstance(
-                                property.PropertyType,
-                                convertedValues.Count
-                            );
-                            for (int i = 0; i < convertedValues.Count; i++)
-                            {
-                                typedArray.SetValue(convertedValues[i], i);
-                            }
-
-                            // Créer l'expression: array.Contains(x.Property)
-                            var containsMethod = typeof(Enumerable)
-                                .GetMethods()
-                                .First(m => m.Name == "Contains" && m.GetParameters().Length == 2)
-                                .MakeGenericMethod(property.PropertyType);
-
-                            var arrayConstant = Expression.Constant(typedArray);
-                            expression = Expression.Call(null, containsMethod, arrayConstant, member);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Error parsing 'any' filter for {key}: {ex.Message}");
-                    }
+                    expression = BuildAnyExpression(filter, member, propertyType, key);
                 }
                 else
                 {
-                    try
-                    {
-                        // Convertir la valeur au type approprié
-                        object convertedValue;
-
-                        if (filter.Value is JsonElement jsonElement)
-                        {
-                            // Extraire la valeur du JsonElement selon le type de la propriété
-                            convertedValue = GetValueFromJsonElement(jsonElement, property.PropertyType);
-                        }
-                        else
-                        {
-                            // Conversion directe si ce n'est pas un JsonElement
-                            convertedValue = Convert.ChangeType(filter.Value, property.PropertyType);
-                        }
-
-                        var constant = Expression.Constant(convertedValue, property.PropertyType);
-
-                        expression = filter.MatchMode.ToLower() switch
-                        {
-                            // Pour les strings, on applique ToLower() pour une comparaison insensible à la casse
-                            "equals" when property.PropertyType == typeof(string) =>
-                                Expression.Equal(
-                                    Expression.Call(member, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!),
-                                    Expression.Call(constant, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!)
-                                ),
-                            
-                            "equals" => Expression.Equal(member, constant),
-                            
-                            "notequals" when property.PropertyType == typeof(string) =>
-                                Expression.NotEqual(
-                                    Expression.Call(member, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!),
-                                    Expression.Call(constant, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!)
-                                ),
-                            
-                            "notequals" => Expression.NotEqual(member, constant),
-
-                            "contains" when property.PropertyType == typeof(string) =>
-                                Expression.Call(
-                                    Expression.Call(member, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!),
-                                    nameof(string.Contains),
-                                    Type.EmptyTypes,
-                                    Expression.Call(constant, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!)
-                                ),
-
-                            "startswith" when property.PropertyType == typeof(string) =>
-                                Expression.Call(
-                                    Expression.Call(member, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!),
-                                    nameof(string.StartsWith),
-                                    Type.EmptyTypes,
-                                    Expression.Call(constant, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!)
-                                ),
-
-                            "endswith" when property.PropertyType == typeof(string) =>
-                                Expression.Call(
-                                    Expression.Call(member, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!),
-                                    nameof(string.EndsWith),
-                                    Type.EmptyTypes,
-                                    Expression.Call(constant, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!)
-                                ),
-
-                            "gte" => Expression.GreaterThanOrEqual(member, constant),
-                            "lte" => Expression.LessThanOrEqual(member, constant),
-                            "gt" => Expression.GreaterThan(member, constant),
-                            "lt" => Expression.LessThan(member, constant),
-
-                            _ => null,
-                        };
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Error converting filter value for {key}: {ex.Message}");
-                    }
+                    expression = BuildComparisonExpression(filter, member, propertyType, key);
                 }
 
                 if (expression == null)
@@ -319,6 +193,182 @@ namespace MainBoilerPlate.Models
             var lambda = Expression.Lambda<Func<T, bool>>(finalExpression, parameter);
 
             return query.Where(lambda);
+        }
+
+        /// <summary>
+        /// Construit une expression pour accéder à une propriété imbriquée
+        /// Exemple: "Teacher/FirstName" => x.Teacher.FirstName
+        /// </summary>
+        private static (Expression? memberExpression, Type? propertyType) GetNestedPropertyExpression(
+            Expression parameter,
+            string[] propertyPath,
+            Type entityType)
+        {
+            Expression currentExpression = parameter;
+            Type currentType = entityType;
+
+            foreach (var propertyName in propertyPath)
+            {
+                var property = currentType.GetProperty(
+                    propertyName,
+                    BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance
+                );
+
+                if (property == null)
+                {
+                    return (null, null);
+                }
+
+                currentExpression = Expression.Property(currentExpression, property);
+                currentType = property.PropertyType;
+            }
+
+            return (currentExpression, currentType);
+        }
+
+        /// <summary>
+        /// Construit une expression pour le matchMode "any" (IN clause)
+        /// </summary>
+        private static Expression? BuildAnyExpression(
+            FilterItem filter,
+            Expression member,
+            Type propertyType,
+            string key)
+        {
+            try
+            {
+                // Parser la valeur qui doit être un tableau JSON
+                Guid[] values;
+
+                if (filter.Value is JsonElement jsonElement)
+                {
+                    values = jsonElement.Deserialize<Guid[]>() ?? Array.Empty<Guid>();
+                }
+                else if (filter.Value is string strValue)
+                {
+                    values = JsonSerializer.Deserialize<Guid[]>(strValue) ?? Array.Empty<Guid>();
+                }
+                else
+                {
+                    values = (Guid[])filter.Value;
+                }
+
+                if (values.Length > 0)
+                {
+                    // Convertir les valeurs au type de la propriété
+                    var convertedValues = values
+                        .Select(v => Convert.ChangeType(v, propertyType))
+                        .ToList();
+
+                    // Créer un tableau du type approprié
+                    var typedArray = Array.CreateInstance(propertyType, convertedValues.Count);
+                    for (int i = 0; i < convertedValues.Count; i++)
+                    {
+                        typedArray.SetValue(convertedValues[i], i);
+                    }
+
+                    // Créer l'expression: array.Contains(x.Property)
+                    var containsMethod = typeof(Enumerable)
+                        .GetMethods()
+                        .First(m => m.Name == "Contains" && m.GetParameters().Length == 2)
+                        .MakeGenericMethod(propertyType);
+
+                    var arrayConstant = Expression.Constant(typedArray);
+                    return Expression.Call(null, containsMethod, arrayConstant, member);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error parsing 'in' filter for {key}: {ex.Message}");
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Construit une expression de comparaison (equals, contains, gt, etc.)
+        /// </summary>
+        private static Expression? BuildComparisonExpression(
+            FilterItem filter,
+            Expression member,
+            Type propertyType,
+            string key)
+        {
+            try
+            {
+                // Convertir la valeur au type approprié
+                object convertedValue;
+
+                if (filter.Value is JsonElement jsonElement)
+                {
+                    // Extraire la valeur du JsonElement selon le type de la propriété
+                    convertedValue = GetValueFromJsonElement(jsonElement, propertyType);
+                }
+                else
+                {
+                    // Conversion directe si ce n'est pas un JsonElement
+                    convertedValue = Convert.ChangeType(filter.Value, propertyType);
+                }
+
+                var constant = Expression.Constant(convertedValue, propertyType);
+
+                return filter.MatchMode.ToLower() switch
+                {
+                    // Pour les strings, on applique ToLower() pour une comparaison insensible à la casse
+                    "equals" when propertyType == typeof(string) =>
+                        Expression.Equal(
+                            Expression.Call(member, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!),
+                            Expression.Call(constant, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!)
+                        ),
+                    
+                    "equals" => Expression.Equal(member, constant),
+                    
+                    "notequals" when propertyType == typeof(string) =>
+                        Expression.NotEqual(
+                            Expression.Call(member, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!),
+                            Expression.Call(constant, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!)
+                        ),
+                    
+                    "notequals" => Expression.NotEqual(member, constant),
+
+                    "contains" when propertyType == typeof(string) =>
+                        Expression.Call(
+                            Expression.Call(member, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!),
+                            nameof(string.Contains),
+                            Type.EmptyTypes,
+                            Expression.Call(constant, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!)
+                        ),
+
+                    "startswith" when propertyType == typeof(string) =>
+                        Expression.Call(
+                            Expression.Call(member, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!),
+                            nameof(string.StartsWith),
+                            Type.EmptyTypes,
+                            Expression.Call(constant, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!)
+                        ),
+
+                    "endswith" when propertyType == typeof(string) =>
+                        Expression.Call(
+                            Expression.Call(member, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!),
+                            nameof(string.EndsWith),
+                            Type.EmptyTypes,
+                            Expression.Call(constant, typeof(string).GetMethod("ToLower", Type.EmptyTypes)!)
+                        ),
+
+                    "gte" => Expression.GreaterThanOrEqual(member, constant),
+                    "lte" => Expression.LessThanOrEqual(member, constant),
+                    "gt" => Expression.GreaterThan(member, constant),
+                    "lt" => Expression.LessThan(member, constant),
+
+                    _ => null,
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error converting filter value for {key}: {ex.Message}");
+            }
+
+            return null;
         }
 
         /// <summary>
