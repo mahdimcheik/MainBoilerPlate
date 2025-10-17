@@ -22,12 +22,12 @@ namespace MainBoilerPlate.Controllers
         /// <returns>Liste de tous les rôles</returns>
         /// <response code="200">Rôles récupérés avec succès</response>
         /// <response code="500">Erreur interne du serveur</response>
-        [HttpGet("all")]
+        [HttpPost("all")]
         [ProducesResponseType(typeof(ResponseDTO<List<RoleAppResponseDTO>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseDTO<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ResponseDTO<List<RoleAppResponseDTO>>>> GetAllRoles()
+        public async Task<ActionResult<ResponseDTO<List<RoleAppResponseDTO>>>> GetAllRoles([FromBody]DynamicFilters<RoleApp> tableState)
         {
-            var response = await roleAppService.GetAllRolesAsync();
+            var response = await roleAppService.GetAllRolesAsync(tableState);
             
             if (response.Status == 200)
             {

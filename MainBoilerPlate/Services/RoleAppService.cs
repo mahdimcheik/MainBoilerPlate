@@ -14,23 +14,31 @@ namespace MainBoilerPlate.Services
         /// Récupère tous les rôles
         /// </summary>
         /// <returns>Liste des rôles</returns>
-        public async Task<ResponseDTO<List<RoleAppResponseDTO>>> GetAllRolesAsync()
+        public async Task<ResponseDTO<List<RoleAppResponseDTO>>> GetAllRolesAsync(DynamicFilters<RoleApp> tableState)
         {
             try
             {
-                var roles = await context.Roles
+                var query = context.Roles
                     .AsNoTracking()
+                    .IgnoreAutoIncludes() // ✅ This prevents EF from auto-including UserRoles
                     .Where(r => r.ArchivedAt == null)
                     .OrderBy(r => r.Name)
-                    .Select(r => new RoleAppResponseDTO(r))
-                    .ToListAsync();
+                    .AsQueryable();
+                
+                if(!string.IsNullOrEmpty(tableState.Search))
+                {
+                    query = query.Where(x => x.Name.ToLower().Contains(tableState.Search.ToLower()));
+                }
+                var toto = query.ToQueryString();
+
+                var res = await query.ApplyAndCountAsync(tableState);
 
                 return new ResponseDTO<List<RoleAppResponseDTO>>
                 {
                     Status = 200,
                     Message = "Rôles récupérés avec succès",
-                    Data = roles,
-                    Count = roles.Count
+                    Data = res.Values.Select(x => new RoleAppResponseDTO(x)).ToList(),
+                    Count = res.Count
                 };
             }
             catch (Exception ex)
@@ -55,6 +63,7 @@ namespace MainBoilerPlate.Services
             {
                 var role = await context.Roles
                     .AsNoTracking()
+                    .IgnoreAutoIncludes() // ✅ Prevents auto-including UserRoles
                     .FirstOrDefaultAsync(r => r.Id == id && r.ArchivedAt == null);
 
                 if (role == null)
