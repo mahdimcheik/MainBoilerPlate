@@ -44,14 +44,6 @@ namespace MainBoilerPlate.Controllers
         [ProducesResponseType(typeof(ResponseDTO<object>), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ResponseDTO<List<CursusResponseDTO>>>> GetAllCursusPaginated([FromBody] DynamicFilters<Cursus> tableState)
         {
-            //var slots = context.Cursuses.AsQueryable();
-            //slots = slots.ApplySorts(tableState);
-            //slots = slots.ApplyDynamicWhere(tableState);
-
-            //var query = slots.ToQueryString();
-
-            //var toto = slots.ToList();
-
             var response = await cursusService.GetAllCursusPaginatedAsync(tableState);
 
             if (response.Status == 200)

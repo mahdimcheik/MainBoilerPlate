@@ -86,9 +86,9 @@ namespace MainBoilerPlate.Controllers
         [Route("confirm-status")]
         [HttpGet]
         public async Task<ActionResult<ResponseDTO<UserResponseDTO>>> ConfirmStatus(
-    [FromQuery] Guid userId
-)
-        {      
+            [FromQuery] Guid userId
+        )
+        {
             var response = await authService.SetStatusConfirmed(userId);
 
             if (response.Status == 200 || response.Status == 201)
@@ -221,7 +221,11 @@ namespace MainBoilerPlate.Controllers
 
             if (user == null)
                 return BadRequest(
-                    new ResponseDTO<UserInfosWithtoken> { Message = "Vous n'êtes pas connecté", Status = 401 }
+                    new ResponseDTO<UserInfosWithtoken>
+                    {
+                        Message = "Vous n'êtes pas connecté",
+                        Status = 401,
+                    }
                 );
 
             var userRoles = await _userManager.GetRolesAsync(user);
@@ -238,6 +242,24 @@ namespace MainBoilerPlate.Controllers
                     },
                 }
             );
+        }
+
+        /// <summary>
+        /// Récupère les informations de l'utilisateur connecté.
+        /// </summary>
+        /// <returns>Informations de l'utilisateur.</returns>
+        [HttpGet("public-informations")]
+        public async Task<ActionResult<ResponseDTO<UserResponseDTO>>> GetPublicInformations(
+            Guid userId
+        )
+        {
+            var response = await authService.GetPublicInformations(userId);
+            if (response.Status >= 400)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
         }
 
         #endregion

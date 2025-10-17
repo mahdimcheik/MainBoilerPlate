@@ -135,6 +135,30 @@ namespace MainBoilerPlate.Services
             }
         }
 
+        public async Task<ResponseDTO<UserResponseDTO>> GetPublicInformations(Guid userId)
+        {
+            var user = await context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if(user is null)
+            {
+                return new ResponseDTO<UserResponseDTO>
+                {
+                    Message = "Demande acceptée",
+                    Status = 400,
+                    Data = null
+                };
+            }
+            var userRoles = await userManager.GetRolesAsync(user);
+
+            return
+                new ResponseDTO<UserResponseDTO>
+                {
+                    Message = "Demande acceptée",
+                    Status = 200,
+                    Data = new UserResponseDTO(user, userRoles.ToList()),                   
+                };            
+        }
+
+
         public async Task<ResponseDTO<bool>> SetStatusConfirmed(Guid UserId)
         {
             await context.Users.ExecuteUpdateAsync(up =>
