@@ -43,6 +43,9 @@ namespace MainBoilerPlate.Models
         public ICollection<Cursus> TeacherCursuses { get; set; }
         public ICollection<Language> Languages { get; set; }
         public ICollection<ProgrammingLanguage> ProgrammingLanguages { get; set; }
+
+        // roles
+        public ICollection<IdentityUserRole<Guid>> UserRoles { get; set; }
     }
 
     public class UserResponseDTO
@@ -72,7 +75,7 @@ namespace MainBoilerPlate.Models
             FirstName = user.FirstName;
             LastName = user.LastName;
             Email = user.Email;
-            Roles = roles;
+            Roles = user.UserRoles is null ? roles : user.UserRoles.Select(x => x.ToString())?.ToList();
             Status = user.Status is null ? null : new StatusAccountDTO(user.Status);
             Gender = user.Gender is null ? null : new GenderDTO(user.Gender);
             Title = user.Title;

@@ -325,7 +325,7 @@ namespace MainBoilerPlate.Contexts
                 e.Property(e => e.ArchivedAt).HasColumnType("timestamp with time zone");
             });
 
-            //relationships
+            // relationships
             builder
                 .Entity<UserApp>()
                 .HasMany(u => u.Adresses)
@@ -726,6 +726,22 @@ namespace MainBoilerPlate.Contexts
             };
 
             builder.Entity<TypeSlot>().HasData(typeSlots);
+
+            // ✅ Configure navigation properties for Identity UserRoles
+            // This allows .Include(u => u.UserRoles).ThenInclude(ur => ur.Role)
+            // UserManager will continue to work perfectly - this only adds EF navigation
+            builder.Entity<Microsoft.AspNetCore.Identity.IdentityUserRole<Guid>>(userRole =>
+            {
+                userRole.HasOne<RoleApp>()
+                    .WithMany(r => r.UserRoles)
+                    .HasForeignKey(ur => ur.RoleId)
+                    .IsRequired();
+
+                userRole.HasOne<UserApp>()
+                    .WithMany(u => u.UserRoles)
+                    .HasForeignKey(ur => ur.UserId)
+                    .IsRequired();
+            });
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)

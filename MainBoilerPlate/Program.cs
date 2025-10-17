@@ -53,6 +53,7 @@ static void ConfigureServices(IServiceCollection services)
     services.AddTransient<TypeSlotService>();
     services.AddTransient<FakeDataService>();
     services.AddTransient<StatusAccountService>();
+    services.AddTransient<RoleAppService>();
 
     services.AddLogging(loggingBuilder =>
     {
