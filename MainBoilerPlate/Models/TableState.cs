@@ -354,6 +354,8 @@ namespace MainBoilerPlate.Models
                     "lte" => Expression.LessThanOrEqual(member, constant),
                     "gt" => Expression.GreaterThan(member, constant),
                     "lt" => Expression.LessThan(member, constant),
+                    "after" => Expression.GreaterThan(member, constant),
+                    "before" => Expression.LessThan(member, constant),
 
                     _ => null,
                 };
