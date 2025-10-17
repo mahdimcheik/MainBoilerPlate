@@ -729,7 +729,6 @@ namespace MainBoilerPlate.Contexts
 
             // ✅ Configure navigation properties for Identity UserRoles
             // This allows .Include(u => u.UserRoles).ThenInclude(ur => ur.Role)
-            // UserManager will continue to work perfectly - this only adds EF navigation
             builder.Entity<Microsoft.AspNetCore.Identity.IdentityUserRole<Guid>>(userRole =>
             {
                 userRole.HasOne<RoleApp>()

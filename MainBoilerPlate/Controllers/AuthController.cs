@@ -229,6 +229,12 @@ namespace MainBoilerPlate.Controllers
                 );
 
             var userRoles = await _userManager.GetRolesAsync(user);
+            var roles = _context.Roles.ToList();
+
+            var rolesDetailed = roles
+                .Where(r => userRoles.Contains(r.Name ?? string.Empty))
+                .Select(r => new RoleAppResponseDTO(r))
+                .ToList();
 
             return Ok(
                 new ResponseDTO<UserInfosWithtoken>
@@ -238,7 +244,7 @@ namespace MainBoilerPlate.Controllers
                     Data = new UserInfosWithtoken
                     {
                         Token = await authService.GenerateAccessTokenAsync(user),
-                        User = new UserResponseDTO(user, userRoles.ToList()),
+                        User = new UserResponseDTO(user, rolesDetailed),
                     },
                 }
             );

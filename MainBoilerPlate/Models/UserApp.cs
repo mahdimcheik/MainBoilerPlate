@@ -67,15 +67,15 @@ namespace MainBoilerPlate.Models
         public GenderDTO? Gender { get; set; }
 
         [Required]
-        public ICollection<string> Roles { get; set; }
+        public ICollection<RoleAppResponseDTO> Roles { get; set; }
 
-        public UserResponseDTO(UserApp user, List<string>? roles)
+        public UserResponseDTO(UserApp user, List<RoleAppResponseDTO>? roles)
         {
             Id = user.Id;
             FirstName = user.FirstName;
             LastName = user.LastName;
             Email = user.Email;
-            Roles = user.UserRoles is null ? roles : user.UserRoles.Select(x => x.ToString())?.ToList();
+            Roles = roles;
             Status = user.Status is null ? null : new StatusAccountDTO(user.Status);
             Gender = user.Gender is null ? null : new GenderDTO(user.Gender);
             Title = user.Title;

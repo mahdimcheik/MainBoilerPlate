@@ -148,13 +148,19 @@ namespace MainBoilerPlate.Services
                 };
             }
             var userRoles = await userManager.GetRolesAsync(user);
+            var roles = context.Roles.ToList();
+
+            var rolesDetailed = roles
+                .Where(r => userRoles.Contains(r.Name ?? string.Empty))
+                .Select(r => new RoleAppResponseDTO(r))
+                .ToList();
 
             return
                 new ResponseDTO<UserResponseDTO>
                 {
                     Message = "Demande acceptée",
                     Status = 200,
-                    Data = new UserResponseDTO(user, userRoles.ToList()),                   
+                    Data = new UserResponseDTO(user, rolesDetailed),                   
                 };            
         }
 
@@ -285,11 +291,17 @@ namespace MainBoilerPlate.Services
                 await transaction.CommitAsync();
 
                 var userRoles = await userManager.GetRolesAsync(userWithLanguages);
+                var roles = context.Roles.ToList();
+
+                var rolesDetailed = roles
+                    .Where(r => userRoles.Contains(r.Name ?? string.Empty))
+                    .Select(r => new RoleAppResponseDTO(r))
+                    .ToList();
                 return new ResponseDTO<UserResponseDTO>
                 {
                     Message = "Profil mis à jour",
                     Status = 200,
-                    Data = new UserResponseDTO(userWithLanguages, userRoles.ToList()),
+                    Data = new UserResponseDTO(userWithLanguages, rolesDetailed),
                 };
             }
             catch (Exception ex)
@@ -363,13 +375,19 @@ namespace MainBoilerPlate.Services
             );
 
             var userRoles = await userManager.GetRolesAsync(refreshTokenDB.User);
+            var roles = context.Roles.ToList();
+
+            var rolesDetailed = roles
+                .Where(r => userRoles.Contains(r.Name ?? string.Empty))
+                .Select(r => new RoleAppResponseDTO(r))
+                .ToList();
 
             return new ResponseDTO<LoginOutputDTO>
             {
                 Message = "Autorisation renouvelée",
                 Data = new LoginOutputDTO
                 {
-                    User = new UserResponseDTO(refreshTokenDB.User, userRoles.ToList()),
+                    User = new UserResponseDTO(refreshTokenDB.User, rolesDetailed),
                     Token = await GenerateAccessTokenAsync(refreshTokenDB.User),
                     RefreshToken = refreshToken,
                 },
@@ -523,6 +541,12 @@ namespace MainBoilerPlate.Services
             // to allow cookies sent from the front end
             response.Headers.Append(key: "Access-Control-Allow-Credentials", value: "true");
             var userRoles = await userManager.GetRolesAsync(user);
+            var roles = context.Roles.ToList();
+
+            var rolesDetailed = roles
+                .Where(r => userRoles.Contains(r.Name ?? string.Empty))
+                .Select(r => new RoleAppResponseDTO(r))
+                .ToList();
 
             response.Cookies.Append(
                 "refreshToken",
@@ -546,7 +570,7 @@ namespace MainBoilerPlate.Services
                 {
                     Token = await GenerateAccessTokenAsync(user),
                     RefreshToken = refreshToken?.Token,
-                    User = new UserResponseDTO(user, userRoles.ToList()),
+                    User = new UserResponseDTO(user, rolesDetailed),
                 },
             };
         }
