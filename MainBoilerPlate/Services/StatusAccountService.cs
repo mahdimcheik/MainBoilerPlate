@@ -13,22 +13,24 @@ namespace MainBoilerPlate.Services
         /// Récupère tous les statuts de compte
         /// </summary>
         /// <returns>Liste des statuts de compte</returns>
-        public async Task<ResponseDTO<List<StatusAccountResponseDTO>>> GetAllStatusAccountsAsync()
+        public async Task<ResponseDTO<List<StatusAccountResponseDTO>>> GetAllStatusAccountsAsync(DynamicFilters<StatusAccount> tableState)
         {
             try
             {
-                var statuses = await context.Statuses
+                var query = context.Statuses
                     .AsNoTracking()
                     .Where(s => s.ArchivedAt == null)
-                    .OrderBy(s => s.Name)
-                    .Select(s => new StatusAccountResponseDTO(s))
-                    .ToListAsync();
+                    .OrderBy(s => s.Name);
+                //.Select(s => new StatusAccountResponseDTO(s))
+                //.ToListAsync();
+
+                var statuses = await query.ApplyAndCountAsync(tableState);
 
                 return new ResponseDTO<List<StatusAccountResponseDTO>>
                 {
                     Status = 200,
                     Message = "Statuts de compte récupérés avec succès",
-                    Data = statuses,
+                    Data = statuses.Values.Select(x => new StatusAccountResponseDTO(x)).ToList(),
                     Count = statuses.Count
                 };
             }

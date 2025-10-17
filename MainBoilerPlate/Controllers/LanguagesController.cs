@@ -24,12 +24,12 @@ namespace MainBoilerPlate.Controllers
         /// <returns>Liste de toutes les langues</returns>
         /// <response code="200">Langues récupérées avec succès</response>
         /// <response code="500">Erreur interne du serveur</response>
-        [HttpGet("all")]
+        [HttpPost("all")]
         [ProducesResponseType(typeof(ResponseDTO<List<LanguageResponseDTO>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseDTO<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ResponseDTO<List<LanguageResponseDTO>>>> GetAllLanguages()
+        public async Task<ActionResult<ResponseDTO<List<LanguageResponseDTO>>>> GetAllLanguages([FromBody] DynamicFilters<Language> tableState)
         {
-            var response = await languagesService.GetAllLanguagesAsync();
+            var response = await languagesService.GetAllLanguagesAsync(tableState);
             
             if (response.Status == 200)
             {

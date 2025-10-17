@@ -113,7 +113,7 @@ namespace MainBoilerPlate.Models
             else
             {
                 // tri par défaut (première propriété)
-                var property = properties.First();
+                var property = properties.Where(x => x.PropertyType == typeof(Guid)).First();
                 var parameter = Expression.Parameter(typeof(T), "x");
                 var propertyAccess = Expression.Property(parameter, property);
                 var lambda = Expression.Lambda(propertyAccess, parameter);

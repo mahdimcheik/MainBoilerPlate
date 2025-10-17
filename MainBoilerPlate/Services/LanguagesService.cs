@@ -13,21 +13,23 @@ namespace MainBoilerPlate.Services
         /// Récupère toutes les langues
         /// </summary>
         /// <returns>Liste des langues</returns>
-        public async Task<ResponseDTO<List<LanguageResponseDTO>>> GetAllLanguagesAsync()
+        public async Task<ResponseDTO<List<LanguageResponseDTO>>> GetAllLanguagesAsync(DynamicFilters<Language> tableState)
         {
             try
             {
-                var languages = await context.Languages
+                var query =  context.Languages
                     .AsNoTracking()
-                    .OrderBy(l => l.Name)
-                    .Select(l => new LanguageResponseDTO(l))
-                    .ToListAsync();
+                    .OrderBy(l => l.Name);
+                //.Select(l => new LanguageResponseDTO(l))
+                //.ToListAsync();
+
+                var languages = await query.ApplyAndCountAsync(tableState);
 
                 return new ResponseDTO<List<LanguageResponseDTO>>
                 {
                     Status = 200,
                     Message = "Langues récupérées avec succès",
-                    Data = languages,
+                    Data = languages.Values.Select(x => new LanguageResponseDTO(x)).ToList(),
                     Count = languages.Count
                 };
             }

@@ -22,12 +22,12 @@ namespace MainBoilerPlate.Controllers
         /// <returns>Liste de tous les statuts de compte</returns>
         /// <response code="200">Statuts de compte récupérés avec succès</response>
         /// <response code="500">Erreur interne du serveur</response>
-        [HttpGet("all")]
+        [HttpPost("all")]
         [ProducesResponseType(typeof(ResponseDTO<List<StatusAccountResponseDTO>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseDTO<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ResponseDTO<List<StatusAccountResponseDTO>>>> GetAllStatusAccounts()
+        public async Task<ActionResult<ResponseDTO<List<StatusAccountResponseDTO>>>> GetAllStatusAccounts([FromBody] DynamicFilters<StatusAccount> tableState)
         {
-            var response = await statusAccountService.GetAllStatusAccountsAsync();
+            var response = await statusAccountService.GetAllStatusAccountsAsync(tableState);
             
             if (response.Status == 200)
             {
