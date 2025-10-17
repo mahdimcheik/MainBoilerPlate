@@ -8,16 +8,11 @@ namespace MainBoilerPlate.Controllers
     [ApiController]
     public class UsersController(UsersService usersService) : ControllerBase
     {
-        [HttpGet("list")]
-        public async Task<ActionResult<ResponseDTO<List<UserResponseDTO>>>> GetAllUsers()
+        [HttpPost("list")]
+        public async Task<ActionResult<ResponseDTO<List<UserResponseDTO>>>> GetAllUsers([FromBody] DynamicFilters<UserApp> tableState)
         {
-            var users = await usersService.GetUsers();
-            return Ok(new ResponseDTO<List<UserResponseDTO>>
-            {
-                Message = "All users",
-                Status = StatusCodes.Status200OK,
-                Data = users
-            });
+            var users = await usersService.GetUsers(tableState);
+            return Ok(users);
         }
     }
 }

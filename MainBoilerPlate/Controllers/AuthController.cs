@@ -364,5 +364,24 @@ namespace MainBoilerPlate.Controllers
         }
 
         #endregion
+        #region logout
+        [AllowAnonymous]
+        [HttpGet("logout")]
+        public async Task<ActionResult<ResponseDTO<object?>>> Logout()
+        {
+            // Récupération de l'email/nom d'utilisateur actuel pour nettoyer les connexions
+            var userEmail = HttpContext.User?.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ??
+                           HttpContext.User?.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value ??
+                           HttpContext.User?.Identity?.Name;
+
+            Response.Cookies.Delete("refreshToken");
+
+            return Ok(new ResponseDTO<object>
+            {
+                Message = "Vous êtes déconnecté",
+                Status = 200
+            });
+        }
+        #endregion
     }
 }

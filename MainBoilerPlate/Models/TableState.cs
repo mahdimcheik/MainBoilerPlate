@@ -131,12 +131,6 @@ namespace MainBoilerPlate.Models
                 query = (IQueryable<T>)orderByMethod.Invoke(null, new object[] { query, lambda })!;
             }
 
-            // 🔹 Pagination
-            if (dynamicFilters.First >= 0)
-                query = query.Skip(dynamicFilters.First);
-
-            query = query.Take(dynamicFilters.Rows > 0 ? dynamicFilters.Rows : 10);
-
             return query;
         }
 
