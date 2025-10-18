@@ -1,28 +1,41 @@
+using System.Linq;
 using MainBoilerPlate.Contexts;
 using MainBoilerPlate.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace MainBoilerPlate.Services
 {
     public class UsersService(MainContext context)
     {
-        public async Task<ResponseDTO<List<UserResponseDTO>>> GetUsers(DynamicFilters<UserApp> tableState)
+        public async Task<ResponseDTO<List<UserResponseDTO>>> GetUsers(
+            DynamicFilters<UserApp> tableState
+        )
         {
-            var query = context.Users
-                .Include(x => x.Languages)
+            var query = context
+                .Users.Include(x => x.Languages)
                 .Include(x => x.Status)
                 .Include(x => x.Gender)
                 .Include(x => x.Experiences)
                 .Include(x => x.Formations)
                 .Include(x => x.TeacherCursuses)
-                .Include(x => x.UserRoles) 
+                .Include(x => x.UserRoles)
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(tableState.Search))
             {
-                query = query.Where(u => string.Concat(u.FirstName.ToLower(), " ", u.LastName.ToLower()).Contains(tableState.Search.ToLower()));
+                query = query.Where(u =>
+                    string.Concat(u.FirstName.ToLower(), " ", u.LastName.ToLower())
+                        .Contains(tableState.Search.ToLower())
+                );
+            }
+
+            if (tableState.Filters.TryGetValue("userRoles/roleId", out var roleIds))
+            {
+                var ids = System.Text.Json.JsonSerializer.Deserialize<Guid[]>(
+                    roleIds.Value.ToString()
+                ).Select(x => x).ToList();
+                query = query.Where(x => x.UserRoles.Any(y => ids.Contains(y.RoleId)));
             }
 
             // Apply filters, sorting, and pagination
@@ -47,11 +60,17 @@ namespace MainBoilerPlate.Services
             {
                 Status = 200,
                 Message = "Utilisateurs récupérés avec succès",
-                Data = countValues.Values.Select(x => new UserResponseDTO( x,
-                roles.Where(r => x.UserRoles.Select(ur => ur.RoleId).Contains(r.Id)).Select(l => new RoleAppResponseDTO(l) ).ToList()
-                )).ToList(),
-          
-                Count = countValues.Count
+                Data = countValues
+                    .Values.Select(x => new UserResponseDTO(
+                        x,
+                        roles
+                            .Where(r => x.UserRoles.Select(ur => ur.RoleId).Contains(r.Id))
+                            .Select(l => new RoleAppResponseDTO(l))
+                            .ToList()
+                    ))
+                    .ToList(),
+
+                Count = countValues.Count,
             };
         }
     }
