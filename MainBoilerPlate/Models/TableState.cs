@@ -17,6 +17,7 @@ namespace MainBoilerPlate.Models
     {
         public required object Value { get; set; }
         public required string MatchMode { get; set; }
+        public bool? SpecialFilter { get; set; } = false;
     }
 
     public class DynamicFilters<T>
@@ -146,7 +147,7 @@ namespace MainBoilerPlate.Models
 
             foreach (var (key, filter) in dynamicFilters.Filters)
             {
-                if (filter.Value == null)
+                if (filter.Value == null || key == "custom" || filter.SpecialFilter == true)
                     continue;
 
                 // 🔹 Détecter si c'est une propriété imbriquée (contient "/")
