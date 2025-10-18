@@ -19,10 +19,13 @@ namespace MainBoilerPlate.Services
             {
                 var query = context.Statuses
                     .AsNoTracking()
-                    .Where(s => s.ArchivedAt == null)
-                    .OrderBy(s => s.Name);
-                //.Select(s => new StatusAccountResponseDTO(s))
-                //.ToListAsync();
+                    .Where(s => s.ArchivedAt == null);
+                    //.OrderBy(s => s.Name);
+
+                if (!string.IsNullOrEmpty(tableState.Search))
+                {
+                    query = query.Where(x => x.Name.ToLower().Contains(tableState.Search.ToLower()));
+                }
 
                 var statuses = await query.ApplyAndCountAsync(tableState);
 

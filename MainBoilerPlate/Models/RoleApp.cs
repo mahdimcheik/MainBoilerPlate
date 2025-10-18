@@ -8,6 +8,7 @@ namespace MainBoilerPlate.Models
         public DateTimeOffset? ArchivedAt { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset? UpdatedAt { get; set; }
+        public string?  Color { get; set; }
         public ICollection<IdentityUserRole<Guid>> UserRoles { get; set; }
 
     }

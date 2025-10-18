@@ -17,11 +17,13 @@ namespace MainBoilerPlate.Services
         {
             try
             {
-                var query =  context.Languages
-                    .AsNoTracking()
-                    .OrderBy(l => l.Name);
-                //.Select(l => new LanguageResponseDTO(l))
-                //.ToListAsync();
+                var query = context.Languages
+                    .AsNoTracking();
+
+                if (!string.IsNullOrEmpty(tableState.Search))
+                {
+                    query = query.Where(x => x.Name.ToLower().Contains(tableState.Search.ToLower()));
+                }
 
                 var languages = await query.ApplyAndCountAsync(tableState);
 

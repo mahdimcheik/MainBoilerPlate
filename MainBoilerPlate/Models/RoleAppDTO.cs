@@ -26,6 +26,7 @@ namespace MainBoilerPlate.Models
         /// </summary>
         /// <example>ADMIN</example>
         public string? NormalizedName { get; set; }
+        public string? Color { get; set; }
 
         /// <summary>
         /// Date de création de l'enregistrement
@@ -49,6 +50,7 @@ namespace MainBoilerPlate.Models
             NormalizedName = role.NormalizedName;
             CreatedAt = role.CreatedAt;
             UpdatedAt = role.UpdatedAt;
+            Color = role.Color;
         }
     }
 
@@ -64,6 +66,7 @@ namespace MainBoilerPlate.Models
         [Required(ErrorMessage = "Le nom du rôle est requis")]
         [StringLength(64, ErrorMessage = "Le nom ne peut pas dépasser 64 caractères")]
         public string Name { get; set; }
+        public string? color { get; set; }
     }
 
     /// <summary>
@@ -78,12 +81,15 @@ namespace MainBoilerPlate.Models
         [Required(ErrorMessage = "Le nom du rôle est requis")]
         [StringLength(64, ErrorMessage = "Le nom ne peut pas dépasser 64 caractères")]
         public string Name { get; set; }
+        public string? color { get; set; }
+
 
         public void UpdateRole(RoleApp role)
         {
             role.Name = Name;
             role.NormalizedName = Name.ToUpper();
             role.UpdatedAt = DateTimeOffset.UtcNow;
+            role.Color = color;
         }
     }
 }
